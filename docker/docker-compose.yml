@@ -8,3 +8,17 @@ services:
       dockerfile: docker/Dockerfile
     ports:
       - '8080:8080'
+
+  ngrok:
+    image: shkoliar/ngrok:latest
+    ports:
+      - '4551:4551'
+    links:
+      - alethia
+    environment:
+      - REGION=eu
+      - DEBUG=true
+      - DOMAIN=alethia
+      - PORT=8080
+    depends_on:
+      - alethia
