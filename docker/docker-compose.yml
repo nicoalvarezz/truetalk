@@ -1,8 +1,11 @@
 version: '3.8'
 
+# Note: I think I don't even need to add the ports if the containers are going to talk to each other
+#       I need to investigate docker networks
+
 services:
   user-service:
-    container_name: user-service
+    container_name: user_service
     build:
       context: ../
       dockerfile: docker/user-service/Dockerfile
@@ -10,10 +13,33 @@ services:
       - '8000:8000'
 
   user-service-db:
-    container_name: user-service-db
+    container_name: user_service_db
     image: postgres
     ports:
       - '5432:5432'
     restart: unless-stopped
     env_file:
       - user-service/user-service-db-credentials.env
+
+  alethia-service:
+    container_name: alethia_service
+    build:
+      context: ../
+      dockerfile: docker/alethia-service/Dockerfile
+    ports:
+      - '8001:8001'
+
+  # The purpose of this container is to open up alethia-service to the internet. This will allow me to test webhooks
+  ngrok-test-webhooks:
+    image: shkoliar/ngrok:latest
+    ports:
+      - '4551:4551'
+    links:
+      - alethia-service
+    environment:
+      - REGION=eu
+      - DEBUG=true
+      - DOMAIN=alethia-service
+      - PORT=8001
+    depends_on:
+      - alethia-service
