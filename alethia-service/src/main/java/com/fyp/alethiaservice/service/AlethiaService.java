@@ -1,9 +1,9 @@
 package com.fyp.alethiaservice.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.alethiaservice.dto.IDPalRequest;
 import com.fyp.alethiaservice.dto.UserRequest;
+import lombok.SneakyThrows;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class AlethiaServce {
+public class AlethiaService {
 
     @Value("${idpal.clientKey}")
     private static String CLIENT_KEY;
@@ -34,7 +34,13 @@ public class AlethiaServce {
     private final OkHttpClient httpClient = new OkHttpClient();
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public void triggerVerification(UserRequest registerUserData) throws IOException {
+    // TODO:
+    // Understand how ID-Pal access token work, how should it be stored? Does it expire? If so, how to renew access token?
+    // Better understand SneakyThrows, how does it work? How does it affect performance?
+    // What should happen with the response? 200 response right? -> That is what makes sense to me
+
+    @SneakyThrows
+    public void triggerVerification(UserRequest registerUserData) {
         IDPalRequest idPalRequest = IDPalRequest.builder()
                 .clientKey(CLIENT_KEY)
                 .accessKey(ACCESS_KEY)
