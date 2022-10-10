@@ -18,6 +18,9 @@ public class IDPalRequest {
     @JsonProperty("access_key")
     private String accessKey;
 
+    @JsonProperty("client_id")
+    private String clientId;
+
     @JsonProperty("information_type")
     private String informationType;
 
@@ -25,4 +28,7 @@ public class IDPalRequest {
 
     @JsonProperty("profile_id")
     private int profileId;
+
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 }
