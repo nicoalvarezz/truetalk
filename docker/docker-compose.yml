@@ -10,7 +10,7 @@ services:
 #      context: ../
 #      dockerfile: docker/user-service/Dockerfile
 #    ports:
-#      - '8000:8000'
+#      - '8000:8080'
 #
 #  user-service-db:
 #    container_name: user_service_db

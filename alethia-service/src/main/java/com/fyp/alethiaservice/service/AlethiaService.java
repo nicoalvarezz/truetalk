@@ -3,107 +3,119 @@ package com.fyp.alethiaservice.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fyp.alethiaservice.dto.AlethiaResponse;
 import com.fyp.alethiaservice.dto.IDPalRequest;
 import com.fyp.alethiaservice.dto.UserRequest;
-import lombok.SneakyThrows;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.HashMap;
 
 
 @Service
-@Component
-@PropertySource("classpath:application.properties")
+@Component // Are you useful?
+@PropertySource("classpath:application.properties") // Are you needed?
 public class AlethiaService {
 
-    // There is a better way on how to do this -> Remember that this variables are not static,
-    // so it should not be written in Upper Case
-    // Use something that is global to the class (I don't remember the technical name, but that exists)
     @Value("${idpal.apiAccess.clientKey}")
-    private String IDPAL_CLIENT_KEY;
+    private String idpalClineKey;
 
     @Value("${idpal.apiAccess.accessKey}")
-    private String IDPAL_ACCESS_KEY;
+    private String idpalAccessKey;
 
     @Value("${idpal.apiAccess.clientId}")
-    private String IDPAL_CLIENT_ID;
+    private String idpalCleintId;
 
     @Value("${idpal.profileId.standard}")
-    private int IDPAL_PROFILE_ID;
+    private int idpalProfileId;
 
     @Value("${idpal.endpoint.send}")
-    private String IDPAL_SEND_ENDPOINT;
+    private String idpalSendLinkEndpoint;
 
     @Value("${idpal.endpoint.getAccessToken}")
-    private String IDPAL_GET_ACCESS_TOKEN_ENDPOINT;
+    private String idpalGetAccessTokenEndpoint;
 
     @Value("${idpal.apiAccess.accessToken}")
-    private String IDPAL_ACCESS_TOKEN;
+    private String idpalAccessToken;
 
     @Value("${idpal.apiAccess.refreshToken}")
-    private String IDPAL_REFRESH_TOKEN;
+    private String idpalRefreshToken;
 
-    private static String INFORMATION_TYPE = "email";
+    private static String INFORMATION_TYPE = "email"; // This is only temporal -> I need to decide whether the user can choose or not ???
     private static ObjectMapper MAPPER = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
 
     private final OkHttpClient httpClient = new OkHttpClient();
 
-    // TODO:
-    // Understand how ID-Pal access token work, how should it be stored? Does it expire? If so, how to renew access token?
-    // What should happen with the response? 200 response right? -> That is what makes sense to me
-
-    public void triggerVerification(UserRequest registerUserData) throws JsonProcessingException {
+    public AlethiaResponse triggerVerification(UserRequest registerUserData) throws JsonProcessingException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
-                .clientKey(IDPAL_CLIENT_KEY)
-                .accessKey(IDPAL_ACCESS_KEY)
+                .clientKey(idpalClineKey)
+                .accessKey(idpalAccessKey)
                 .informationType(INFORMATION_TYPE)
                 .contact(registerUserData.getEmail())
-                .profileId(IDPAL_PROFILE_ID)
+                .profileId(idpalProfileId)
                 .build();
 
         RequestBody body = RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON);
-        Response response = makeIdPalRequest(
-                generateIdPalRequest(IDPAL_SEND_ENDPOINT, body)
+        HashMap<String, String> responseMap = makeIdPalRequest(
+                generateIdPalRequest(idpalSendLinkEndpoint, body)
         );
 
-        // What does this return ?????
+        AlethiaResponse alethiaResponse = AlethiaResponse.builder()
+                .message(responseMap.get("message"))
+                .statusCode(Integer.parseInt(responseMap.get("status")))
+                .uuid(responseMap.get("uuid"))
+                .build();
+
+        LOGGER.info(alethiaResponse.toString());
+        return alethiaResponse;
     }
 
     private void renewAccessToken() throws JsonProcessingException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
-                .clientKey(IDPAL_CLIENT_KEY)
-                .accessKey(IDPAL_ACCESS_KEY)
-                .clientId(IDPAL_CLIENT_ID)
-                .refreshToken(IDPAL_REFRESH_TOKEN)
+                .clientKey(idpalClineKey)
+                .accessKey(idpalAccessKey)
+                .clientId(idpalCleintId)
+                .refreshToken(idpalRefreshToken)
                 .build();
 
         RequestBody body = RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON);
-        Response response = makeIdPalRequest(
-                generateIdPalRequest(IDPAL_GET_ACCESS_TOKEN_ENDPOINT, body)
+        HashMap<String, String> responseMap = makeIdPalRequest(
+                generateIdPalRequest(idpalGetAccessTokenEndpoint, body)
         );
     }
 
     private Request generateIdPalRequest(String endpoint, RequestBody body) {
         return new Request.Builder()
                 .url(endpoint)
-                .addHeader("Authorization", "Bearer " + IDPAL_ACCESS_TOKEN)
+                .addHeader("Authorization", "Bearer " + idpalAccessToken)
                 .addHeader("Accept", "application/json")
                 .post(body)
                 .build();
     }
 
-    @SneakyThrows
-    private Response makeIdPalRequest(Request request) {
-        return httpClient.newCall(request).execute();
+    private HashMap<String, String> makeIdPalRequest(Request request) {
+        try {
+            Response response = httpClient.newCall(request).execute();
+            HashMap<String, String> responseMap = MAPPER.readValue(response.body().string(), HashMap.class);
+            responseMap.put("status", String.valueOf(response.code()));
+            return responseMap;
+        } catch (IOException e) {
+            return new HashMap<>() {{
+                put("message", "The request was valid. Something occurred with ID-Pal service");
+                put("status", "200");
+            }};
+        }
     }
 }
