@@ -23,18 +23,18 @@ import java.util.HashMap;
 
 
 @Service
-@Component // Are you useful?
-@PropertySource("classpath:application.properties") // Are you needed?
+@Component
+@PropertySource("classpath:application.properties")
 public class AlethiaService {
 
     @Value("${idpal.apiAccess.clientKey}")
-    private String idpalClineKey;
+    private String idpalClientKey;
 
     @Value("${idpal.apiAccess.accessKey}")
     private String idpalAccessKey;
 
     @Value("${idpal.apiAccess.clientId}")
-    private String idpalCleintId;
+    private String idpalClientId;
 
     @Value("${idpal.profileId.standard}")
     private int idpalProfileId;
@@ -60,7 +60,7 @@ public class AlethiaService {
 
     public AlethiaResponse triggerVerification(UserRequest registerUserData) throws JsonProcessingException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
-                .clientKey(idpalClineKey)
+                .clientKey(idpalClientKey)
                 .accessKey(idpalAccessKey)
                 .informationType(INFORMATION_TYPE)
                 .contact(registerUserData.getEmail())
@@ -84,9 +84,9 @@ public class AlethiaService {
 
     private void renewAccessToken() throws JsonProcessingException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
-                .clientKey(idpalClineKey)
+                .clientKey(idpalClientKey)
                 .accessKey(idpalAccessKey)
-                .clientId(idpalCleintId)
+                .clientId(idpalClientId)
                 .refreshToken(idpalRefreshToken)
                 .build();
 
