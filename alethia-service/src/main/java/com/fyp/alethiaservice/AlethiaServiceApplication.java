@@ -9,5 +9,4 @@ public class AlethiaServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AlethiaServiceApplication.class, args);
 	}
-
 }
