@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.alethiaservice.dto.AlethiaResponse;
 import com.fyp.alethiaservice.dto.IDPalRequest;
+import com.fyp.alethiaservice.dto.UserPersonalInfo;
 import com.fyp.alethiaservice.dto.UserRequest;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -51,6 +52,9 @@ public class AlethiaService {
     @Value("${idpal.apiAccess.refreshToken}")
     private String idpalRefreshToken;
 
+    @Value("${idpal.endpoint.getSubmissionDetails}")
+    private String idpalGetSubmissionDetailsEndpoint;
+
     private static String INFORMATION_TYPE = "email"; // This is only temporal -> I need to decide whether the user can choose or not ???
     private static ObjectMapper MAPPER = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -67,9 +71,9 @@ public class AlethiaService {
                 .profileId(idpalProfileId)
                 .build();
 
-        RequestBody body = RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON);
         HashMap<String, String> responseMap = makeIdPalRequest(
-                generateIdPalRequest(idpalSendLinkEndpoint, body)
+                generateIdPalRequest(idpalSendLinkEndpoint,
+                        RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON))
         );
 
         AlethiaResponse alethiaResponse = AlethiaResponse.builder()
@@ -82,6 +86,39 @@ public class AlethiaService {
         return alethiaResponse;
     }
 
+    public UserPersonalInfo retrieveUserPersonalInfo(int submissionId) throws JsonProcessingException{
+        IDPalRequest idPalRequest = IDPalRequest.builder()
+                .clientKey(idpalClientKey)
+                .accessKey(idpalAccessKey)
+                .submissionId(submissionId)
+                .contentDisposition("inline")
+                .build();
+
+        HashMap<String, String> responseMap = makeIdPalRequest(
+                generateIdPalRequest(idpalGetSubmissionDetailsEndpoint,
+                        RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON))
+        );
+
+        // Have a think, is there anything else needed?
+        return UserPersonalInfo.builder()
+                .firstName(responseMap.get("firstname"))
+                .lastName(responseMap.get("lastname"))
+                .email(responseMap.get("email"))
+                .accountId(responseMap.get("account_id"))
+                .phoneCountryCode(responseMap.get("phone_country_code"))
+                .phoneNumber(responseMap.get("phone"))
+                .gender(responseMap.get("gender"))
+                .dateOfBirth(responseMap.get("dob"))
+                .countryOfBirth(responseMap.get("countryofbirth"))
+                .address1(responseMap.get("address1"))
+                .address2(responseMap.get("address2"))
+                .city(responseMap.get("city"))
+                .county(responseMap.get("county"))
+                .countryName(responseMap.get("country_name"))
+                .postalCode(responseMap.get("postalcode"))
+                .build();
+    }
+
     private void renewAccessToken() throws JsonProcessingException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
                 .clientKey(idpalClientKey)
@@ -90,9 +127,9 @@ public class AlethiaService {
                 .refreshToken(idpalRefreshToken)
                 .build();
 
-        RequestBody body = RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON);
         HashMap<String, String> responseMap = makeIdPalRequest(
-                generateIdPalRequest(idpalGetAccessTokenEndpoint, body)
+                generateIdPalRequest(idpalGetAccessTokenEndpoint,
+                        RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON))
         );
     }
 

@@ -31,4 +31,10 @@ public class IDPalRequest {
 
     @JsonProperty("refresh_token")
     private String refreshToken;
+
+    @JsonProperty("submission_id")
+    private int submissionId;
+
+    @JsonProperty("content_disposition")
+    private String contentDisposition;
 }
