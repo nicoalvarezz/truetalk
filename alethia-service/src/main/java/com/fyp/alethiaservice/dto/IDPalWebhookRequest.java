@@ -1,0 +1,27 @@
+package com.fyp.alethiaservice.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class IDPalWebhookRequest {
+
+    @JsonProperty("event_id")
+    private int eventId;
+
+    @JsonProperty("event_type")
+    private String eventType;
+
+    private String uuid;
+
+    @JsonProperty("submission_id")
+    private int submissionId;
+
+    private String source;
+}

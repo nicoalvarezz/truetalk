@@ -2,6 +2,7 @@ package com.fyp.alethiaservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.alethiaservice.dto.AlethiaResponse;
+import com.fyp.alethiaservice.dto.IDPalWebhookRequest;
 import com.fyp.alethiaservice.dto.UserRequest;
 import com.fyp.alethiaservice.service.AlethiaService;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,12 @@ public class AlethiaController {
     @ResponseBody
     public AlethiaResponse triggerVerification(@RequestBody UserRequest userRequest) throws JsonProcessingException {
         return alethiaService.triggerVerification(userRequest);
+    }
+
+    @PostMapping("/webhook-receiver")
+    public void webhookReceiver(@RequestBody IDPalWebhookRequest idPalWebhookRequest) {
+        // TODO:
+        // Retrieve necessary information from the user data gathered from the id verification
+        System.out.println(idPalWebhookRequest.toString());
     }
 }
