@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class IDPalWebHookRequest {
+public class IDPalWebhookRequest {
 
     @JsonProperty("event_id")
     private int eventId;

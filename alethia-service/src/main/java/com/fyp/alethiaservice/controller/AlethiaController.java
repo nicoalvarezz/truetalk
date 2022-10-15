@@ -2,7 +2,7 @@ package com.fyp.alethiaservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.alethiaservice.dto.AlethiaResponse;
-import com.fyp.alethiaservice.dto.IDPalWebHookRequest;
+import com.fyp.alethiaservice.dto.IDPalWebhookRequest;
 import com.fyp.alethiaservice.dto.UserRequest;
 import com.fyp.alethiaservice.service.AlethiaService;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +29,9 @@ public class AlethiaController {
     }
 
     @PostMapping("/webhook-receiver")
-    public void webhookReceiver(@RequestBody IDPalWebHookRequest idPalWebHookRequest) {
+    public void webhookReceiver(@RequestBody IDPalWebhookRequest idPalWebhookRequest) {
         // TODO:
         // Retrieve necessary information from the user data gathered from the id verification
-        System.out.println(idPalWebHookRequest.toString());
+        System.out.println(idPalWebhookRequest.toString());
     }
 }
