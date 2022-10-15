@@ -31,15 +31,16 @@ services:
 
   # The purpose of this container is to open up alethia-service to the internet. This will allow me to test webhooks
   ngrok-test-webhooks:
+    container_name: ngrok_test_webhooks
     image: shkoliar/ngrok:latest
     ports:
       - '4551:4551'
     links:
-      - alethia-service
+      - alethia_service
     environment:
       - REGION=eu
       - DEBUG=true
-      - DOMAIN=alethia-service
-      - PORT=8001
+      - DOMAIN=alethia_service
+      - PORT=8080
     depends_on:
-      - alethia-service
+      - alethia_service
