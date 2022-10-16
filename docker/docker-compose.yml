@@ -29,7 +29,7 @@ services:
     ports:
       - '8001:8001'
 
-#   The purpose of this container is to open up alethia-service to the internet. This will allow me to test webhooks
+  # The purpose of this container is to open up alethia-service to the internet. This will allow me to test webhooks
   ngrok-test-webhooks:
     container_name: ngrok_test_webhooks
     image: shkoliar/ngrok:latest

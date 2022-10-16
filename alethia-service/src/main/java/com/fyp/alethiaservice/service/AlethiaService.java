@@ -98,8 +98,6 @@ public class AlethiaService {
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON))
         );
 
-        System.out.println(responseMap);
-
         return UserPersonalInfo.builder()
                 .firstName(responseMap.get("firstname"))
                 .lastName(responseMap.get("lastname"))
