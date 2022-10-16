@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserServiceResponse {
+public class TriggerVerificationResponse {
 
     private String message;
 

@@ -2,9 +2,10 @@ package com.fyp.userservice.service;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.userservice.dto.AlethiaRequest;
-import com.fyp.userservice.dto.UserServiceResponse;
+import com.fyp.userservice.dto.TriggerVerificationResponse;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import okhttp3.OkHttpClient;
 import okhttp3.MediaType;
@@ -28,13 +29,15 @@ public class UserService {
     @Value("${alethia.endpoint.triggerVerification}")
     private String alethiaTriggerVerificationEndpoint;
 
-    private static ObjectMapper MAPPER = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    private static ObjectMapper MAPPER = new ObjectMapper()
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private final OkHttpClient httpClient = new OkHttpClient();
 
-    public UserServiceResponse triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws JsonProcessingException {
+    public TriggerVerificationResponse triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws JsonProcessingException {
         AlethiaRequest alethiaRequest = AlethiaRequest.builder()
                 .email(registerUserRequest.getEmail())
                 .phoneNumber(registerUserRequest.getPhoneNumber())
@@ -45,12 +48,7 @@ public class UserService {
                         RequestBody.create(MAPPER.writeValueAsString(alethiaRequest), JSON))
         );
 
-//        UserServiceResponse userServiceResponse = MAPPER.convertValue(responseMap, UserServiceResponse.class);
-
-        return UserServiceResponse.builder()
-                .message(responseMap.get("message"))
-                .status(Integer.parseInt(responseMap.get("status_code")))
-                .build();
+        return MAPPER.convertValue(responseMap, TriggerVerificationResponse.class);
     }
 
     private Request generateAlethiaRequest(String endpoint, RequestBody body) {
