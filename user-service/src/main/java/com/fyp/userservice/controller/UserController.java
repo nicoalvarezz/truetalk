@@ -1,5 +1,7 @@
 package com.fyp.userservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fyp.userservice.dto.UserServiceResponse;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register-user")
-    public void registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
-        // TODO:
-        // Call User service
-        System.out.println(registerUserRequest.toString());
+    public UserServiceResponse registerUser(@RequestBody RegisterUserRequest registerUserRequest) throws JsonProcessingException {
+        return userService.triggerAlethiaVerification(registerUserRequest);
     }
 }

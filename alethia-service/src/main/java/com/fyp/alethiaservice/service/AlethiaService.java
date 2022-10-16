@@ -25,7 +25,6 @@ import java.util.HashMap;
 
 @Service
 @Component
-@PropertySource("classpath:application.properties")
 public class AlethiaService {
 
     @Value("${idpal.apiAccess.clientKey}")
@@ -79,7 +78,7 @@ public class AlethiaService {
         AlethiaResponse alethiaResponse = AlethiaResponse.builder()
                 .message(responseMap.get("message"))
                 .statusCode(Integer.parseInt(responseMap.get("status")))
-                .uuid(responseMap.get("uuid"))
+                .uuid(responseMap.get("uuid")) // I don't think I should be returning the uuid in the response -> Follow-up stories in responses
                 .build();
 
         LOGGER.info(alethiaResponse.toString());
@@ -98,6 +97,8 @@ public class AlethiaService {
                 generateIdPalRequest(idpalGetSubmissionDetailsEndpoint,
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON))
         );
+
+        System.out.println(responseMap);
 
         return UserPersonalInfo.builder()
                 .firstName(responseMap.get("firstname"))
