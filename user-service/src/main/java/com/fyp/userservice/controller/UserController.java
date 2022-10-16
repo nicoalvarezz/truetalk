@@ -1,6 +1,7 @@
 package com.fyp.userservice.controller;
 
 import com.fyp.userservice.dto.RegisterUserRequest;
+import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-//    private final UserService userService;
+    private final UserService userService;
 
     @PostMapping("/register-user")
     public void registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
+        // TODO:
+        // Call User service
         System.out.println(registerUserRequest.toString());
-        System.out.println(registerUserRequest.getEmail());
     }
 }
