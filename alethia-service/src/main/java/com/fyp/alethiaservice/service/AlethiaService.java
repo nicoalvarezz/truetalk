@@ -60,6 +60,7 @@ public class AlethiaService {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
+    private static String ID_PAL_REQUEST_FAILED = "Something occurred with ID-Pal service";
 
     private final OkHttpClient httpClient = new OkHttpClient();
 
@@ -131,7 +132,7 @@ public class AlethiaService {
         } catch (IOException e) {
             LOGGER.error(e.toString());
             return new Response.Builder()
-                    .message("The request was valid. Something occurred with Alethia service")
+                    .message(ID_PAL_REQUEST_FAILED)
                     .code(HttpStatus.OK.value())
                     .build();
         }
