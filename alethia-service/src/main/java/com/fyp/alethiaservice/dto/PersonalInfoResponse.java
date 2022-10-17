@@ -1,5 +1,6 @@
 package com.fyp.alethiaservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserPersonalInfo {
+public class PersonalInfoResponse {
 
     @JsonProperty("firstname")
     private String firstName;
@@ -50,4 +51,8 @@ public class UserPersonalInfo {
 
     @JsonProperty("postalcode")
     private String postalCode;
+
+    @JsonProperty("status")
+    @JsonIgnore
+    private int statusCode;
 }
