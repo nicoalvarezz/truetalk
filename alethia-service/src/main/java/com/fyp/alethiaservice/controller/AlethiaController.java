@@ -1,9 +1,8 @@
 package com.fyp.alethiaservice.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fyp.alethiaservice.dto.AlethiaResponse;
+import com.fyp.alethiaservice.dto.TriggerVerificationResponse;
 import com.fyp.alethiaservice.dto.IDPalWebhookRequest;
-import com.fyp.alethiaservice.dto.UserPersonalInfo;
+import com.fyp.alethiaservice.dto.PersonalInfoResponse;
 import com.fyp.alethiaservice.dto.UserRequest;
 import com.fyp.alethiaservice.service.AlethiaService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/alethia")
 @RequiredArgsConstructor
@@ -25,14 +26,14 @@ public class AlethiaController {
     @PostMapping("/trigger-verification")
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
-    public AlethiaResponse triggerVerification(@RequestBody UserRequest userRequest) throws JsonProcessingException {
+    public TriggerVerificationResponse triggerVerification(@RequestBody UserRequest userRequest) throws IOException {
         return alethiaService.triggerVerification(userRequest);
     }
 
     @PostMapping("/webhook-receiver")
     @ResponseStatus(code = HttpStatus.OK)
-    public void webhookReceiver(@RequestBody IDPalWebhookRequest idPalWebhookRequest) throws JsonProcessingException {
-        UserPersonalInfo userPersonalInfo = alethiaService.retrieveUserPersonalInfo(idPalWebhookRequest.getSubmissionId());
+    public void webhookReceiver(@RequestBody IDPalWebhookRequest idPalWebhookRequest) throws IOException {
+        PersonalInfoResponse userPersonalInfo = alethiaService.retrieveUserPersonalInfo(idPalWebhookRequest.getSubmissionId());
         // TODO:
         // Send info to user-service
     }
