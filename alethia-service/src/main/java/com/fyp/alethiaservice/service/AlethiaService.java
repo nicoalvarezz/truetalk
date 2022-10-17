@@ -79,6 +79,7 @@ public class AlethiaService {
         );
 
         TriggerVerificationResponse triggerVerificationResponse = MAPPER.readValue(response.body().string(), TriggerVerificationResponse.class);
+        triggerVerificationResponse.setStatusCode(response.code());
 
         LOGGER.info(triggerVerificationResponse.toString());
         return triggerVerificationResponse;
@@ -98,6 +99,7 @@ public class AlethiaService {
         );
 
         PersonalInfoResponse personalInfoResponse = MAPPER.readValue(response.body().string(), PersonalInfoResponse.class);
+        personalInfoResponse.setStatusCode(response.code());
 
         LOGGER.info(personalInfoResponse.toString());
         return personalInfoResponse;
