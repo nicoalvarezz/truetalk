@@ -15,5 +15,5 @@ public class TriggerVerificationResponse {
     private String message;
 
     @JsonProperty("status_code")
-    private int status;
+    private int statusCode;
 }
