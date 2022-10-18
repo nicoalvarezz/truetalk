@@ -2,6 +2,7 @@ package com.fyp.userservice.controller;
 
 import com.fyp.userservice.dto.TriggerVerificationResponse;
 import com.fyp.userservice.dto.RegisterUserRequest;
+import com.fyp.userservice.dto.UserProfileInfo;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,9 +20,15 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/register-user")
+    @PostMapping("/trigger-alethia-verification")
     @ResponseBody
-    public TriggerVerificationResponse registerUser(@RequestBody RegisterUserRequest registerUserRequest) throws IOException {
+    public TriggerVerificationResponse triggerAlethiaVerification(@RequestBody RegisterUserRequest registerUserRequest) throws IOException {
         return userService.triggerAlethiaVerification(registerUserRequest);
+    }
+
+    @PostMapping("/receive-user-profile")
+    @ResponseBody
+    public void receiveUserInformation(@RequestBody UserProfileInfo userProfileInfo) {
+
     }
 }
