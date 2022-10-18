@@ -1,9 +1,9 @@
 package com.fyp.alethiaservice.controller;
 
-import com.fyp.alethiaservice.dto.TriggerVerificationResponse;
-import com.fyp.alethiaservice.dto.IDPalWebhookRequest;
-import com.fyp.alethiaservice.dto.UserProfileInfo;
-import com.fyp.alethiaservice.dto.UserRequest;
+import com.fyp.alethiaservice.dto.TriggerVerification;
+import com.fyp.alethiaservice.dto.idpal.IDPalWebhookRequest;
+import com.fyp.alethiaservice.dto.users.UserProfileInfo;
+import com.fyp.alethiaservice.dto.users.UserRequest;
 import com.fyp.alethiaservice.service.AlethiaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class AlethiaController {
     @PostMapping("/trigger-verification")
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
-    public TriggerVerificationResponse triggerVerification(@RequestBody UserRequest userRequest) throws IOException {
+    public TriggerVerification triggerVerification(@RequestBody UserRequest userRequest) throws IOException {
         return alethiaService.triggerVerification(userRequest);
     }
 
