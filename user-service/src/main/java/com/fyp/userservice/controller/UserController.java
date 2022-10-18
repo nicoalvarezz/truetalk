@@ -26,7 +26,7 @@ public class UserController {
         return userService.triggerAlethiaVerification(registerUserRequest);
     }
 
-    @PostMapping("/receiver-user-profile")
+    @PostMapping("/receive-user-profile")
     @ResponseBody
     public void receiveUserInformation(@RequestBody UserProfileInfo userProfileInfo) {
 
