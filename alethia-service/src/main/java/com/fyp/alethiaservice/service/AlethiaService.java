@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.alethiaservice.dto.TriggerVerificationResponse;
 import com.fyp.alethiaservice.dto.IDPalRequest;
-import com.fyp.alethiaservice.dto.PersonalInfoResponse;
+import com.fyp.alethiaservice.dto.UserProfileInfo;
 import com.fyp.alethiaservice.dto.UserRequest;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -85,7 +85,7 @@ public class AlethiaService {
         return triggerVerificationResponse;
     }
 
-    public PersonalInfoResponse retrieveUserPersonalInfo(int submissionId) throws IOException {
+    public UserProfileInfo retrieveUserPersonalInfo(int submissionId) throws IOException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
                 .clientKey(idpalClientKey)
                 .accessKey(idpalAccessKey)
@@ -98,12 +98,21 @@ public class AlethiaService {
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON))
         );
 
-        PersonalInfoResponse personalInfoResponse = MAPPER.readValue(response.body().string(), PersonalInfoResponse.class);
-        personalInfoResponse.setStatusCode(response.code());
+        UserProfileInfo personalInfoResponse = MAPPER.readValue(response.body().string(), UserProfileInfo.class);
 
         LOGGER.info(personalInfoResponse.toString());
         return personalInfoResponse;
     }
+
+    public void sendUserProfileToUserService(UserProfileInfo userProfileInfo) throws JsonProcessingException {
+            Response response = makeRequest(
+                    generateUserRequest("http://user-service:8000/api/users/receive-user-profile",
+                            RequestBody.create(MAPPER.writeValueAsString(userProfileInfo), JSON))
+            );
+
+            LOGGER.info(response.toString());
+    }
+
 
     private void renewAccessToken() throws JsonProcessingException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
@@ -117,6 +126,14 @@ public class AlethiaService {
                 generateIdPalRequest(idpalGetAccessTokenEndpoint,
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON))
         );
+    }
+
+    private Request generateUserRequest(String endpoint, RequestBody body) {
+        return new Request.Builder()
+                .url(endpoint)
+                .addHeader("Accept", "application/json")
+                .post(body)
+                .build();
     }
 
     private Request generateIdPalRequest(String endpoint, RequestBody body) {

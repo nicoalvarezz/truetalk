@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonalInfoResponse {
+public class UserProfileInfo {
 
     @JsonProperty("firstname")
     private String firstName;
@@ -52,7 +52,4 @@ public class PersonalInfoResponse {
     @JsonProperty("postalcode")
     private String postalCode;
 
-    @JsonProperty("status")
-    @JsonIgnore
-    private int statusCode;
 }

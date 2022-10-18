@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserProfileInfo {
+
     @JsonProperty("firstname")
     private String firstName;
 

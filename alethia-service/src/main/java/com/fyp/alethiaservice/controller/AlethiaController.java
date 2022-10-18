@@ -2,7 +2,7 @@ package com.fyp.alethiaservice.controller;
 
 import com.fyp.alethiaservice.dto.TriggerVerificationResponse;
 import com.fyp.alethiaservice.dto.IDPalWebhookRequest;
-import com.fyp.alethiaservice.dto.PersonalInfoResponse;
+import com.fyp.alethiaservice.dto.UserProfileInfo;
 import com.fyp.alethiaservice.dto.UserRequest;
 import com.fyp.alethiaservice.service.AlethiaService;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +31,8 @@ public class AlethiaController {
     }
 
     @PostMapping("/webhook-receiver")
-    @ResponseStatus(code = HttpStatus.OK)
     public void webhookReceiver(@RequestBody IDPalWebhookRequest idPalWebhookRequest) throws IOException {
-        PersonalInfoResponse userPersonalInfo = alethiaService.retrieveUserPersonalInfo(idPalWebhookRequest.getSubmissionId());
-        // TODO:
-        // Send info to user-service
+        UserProfileInfo userPersonalInfo = alethiaService.retrieveUserPersonalInfo(idPalWebhookRequest.getSubmissionId());
+        alethiaService.sendUserProfileToUserService(userPersonalInfo);
     }
 }
