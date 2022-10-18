@@ -1,7 +1,6 @@
 package com.fyp.userservice.service;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.userservice.dto.AlethiaRequest;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 @Service
 @Component
@@ -34,21 +32,25 @@ public class UserService {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    private static String REQUEST_ERROR = "The request was valid. Something occurred with the called service";
 
     private final OkHttpClient httpClient = new OkHttpClient();
 
-    public TriggerVerificationResponse triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws JsonProcessingException {
+    public TriggerVerificationResponse triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
         AlethiaRequest alethiaRequest = AlethiaRequest.builder()
                 .email(registerUserRequest.getEmail())
                 .phoneNumber(registerUserRequest.getPhoneNumber())
                 .build();
 
-        HashMap<String, String> responseMap = makeAlethiaRequest(
+        Response response = makeRequest(
                 generateAlethiaRequest(alethiaTriggerVerificationEndpoint,
                         RequestBody.create(MAPPER.writeValueAsString(alethiaRequest), JSON))
         );
+        TriggerVerificationResponse triggerVerificationResponse = MAPPER.readValue(response.body().string(), TriggerVerificationResponse.class);
+        triggerVerificationResponse.setStatusCode(response.code());
 
-        return MAPPER.convertValue(responseMap, TriggerVerificationResponse.class);
+        LOGGER.info(triggerVerificationResponse.toString());
+        return triggerVerificationResponse;
     }
 
     private Request generateAlethiaRequest(String endpoint, RequestBody body) {
@@ -59,18 +61,15 @@ public class UserService {
                 .build();
     }
 
-    private HashMap<String, String> makeAlethiaRequest(Request request) {
+    private Response makeRequest(Request request) {
         try {
-            Response response = httpClient.newCall(request).execute();
-            HashMap<String, String> responseMap = MAPPER.readValue(response.body().string(), HashMap.class);
-            responseMap.put("status", String.valueOf(response.code()));
-            return responseMap;
+            return httpClient.newCall(request).execute();
         } catch (IOException e) {
             LOGGER.error(e.toString());
-            return new HashMap<>() {{
-                put("message", "The request was valid. Something occurred with Alethia service");
-                put("status_code", String.valueOf(HttpStatus.OK));
-            }};
+            return new Response.Builder()
+                    .message(REQUEST_ERROR)
+                    .code(HttpStatus.OK.value())
+                    .build();
         }
     }
 }

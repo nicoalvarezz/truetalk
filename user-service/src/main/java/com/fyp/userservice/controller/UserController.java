@@ -1,6 +1,5 @@
 package com.fyp.userservice.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.userservice.dto.TriggerVerificationResponse;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.service.UserService;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class UserController {
 
     @PostMapping("/register-user")
     @ResponseBody
-    public TriggerVerificationResponse registerUser(@RequestBody RegisterUserRequest registerUserRequest) throws JsonProcessingException {
+    public TriggerVerificationResponse registerUser(@RequestBody RegisterUserRequest registerUserRequest) throws IOException {
         return userService.triggerAlethiaVerification(registerUserRequest);
     }
 }
