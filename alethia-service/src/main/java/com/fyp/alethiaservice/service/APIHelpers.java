@@ -58,18 +58,21 @@ public class APIHelpers {
         }
     }
 
-    public static Request generateRequest(String endpoint, RequestBody body, String accessToken) {
-        if (!accessToken.isEmpty()) {
-            // TODO:
-            // Add access token to header
-            // Have some sort of Header()
-        }
+    public static Request generateRequest(String method, String endpoint, RequestBody body, String accessToken) {
+        Headers headers = !accessToken.isEmpty()
+                            ? new Headers.Builder()
+                                .add("Accept", "application/json")
+                                .add("Authorization", "Bearer " + accessToken)
+                                .build()
+                            : new Headers.Builder()
+                                .add("Accept", "application/json")
+                                .build();
 
         Request request = new Request.Builder()
-                .addHeader("Accept", "application/json")
+                .url(endpoint)
+                .headers(headers)
                 .method("POST", body)
                 .build();
-
 
         return request;
     }
@@ -83,7 +86,9 @@ public class APIHelpers {
                 .build();
 
         Response responseMap = makeAPIRequest(
-                generateRequest(idpalGetAccessTokenEndpoint,
+                generateRequest(
+                        "POST",
+                        idpalGetAccessTokenEndpoint,
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
                         idpalAccessToken
                 )
