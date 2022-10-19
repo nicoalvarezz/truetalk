@@ -49,6 +49,7 @@ public class AlethiaService {
     private static Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static String EMPTY_ACCESS_TOKEN = "";
+    private static String POST_METHOD = "POST";
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -65,7 +66,7 @@ public class AlethiaService {
 
         Response response = APIHelpers.makeAPIRequest(
                 APIHelpers.generateRequest(
-                        "POST",
+                        POST_METHOD,
                         idpalSendLinkEndpoint,
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
                         idpalAccessToken
@@ -89,7 +90,7 @@ public class AlethiaService {
 
         Response response = APIHelpers.makeAPIRequest(
                 APIHelpers.generateRequest(
-                        "POST",
+                        POST_METHOD,
                         idpalGetSubmissionDetailsEndpoint,
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
                         idpalAccessToken
@@ -105,7 +106,7 @@ public class AlethiaService {
     public void sendUserProfileToUserService(UserProfileInfo userProfileInfo) throws JsonProcessingException {
             Response response = APIHelpers.makeAPIRequest(
                     APIHelpers.generateRequest(
-                            "POST",
+                            POST_METHOD,
                             usersReceiveUserProfile,
                             RequestBody.create(MAPPER.writeValueAsString(userProfileInfo), JSON),
                             EMPTY_ACCESS_TOKEN

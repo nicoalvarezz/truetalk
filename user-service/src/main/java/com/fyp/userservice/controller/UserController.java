@@ -5,8 +5,6 @@ import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfileInfo;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
-import okhttp3.Response;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +29,6 @@ public class UserController {
     @PostMapping("/receive-user-profile")
     @ResponseBody
     public void receiveUserInformation(@RequestBody UserProfileInfo userProfileInfo) {
-        System.out.println("Thanks bro, I got the data. You can see it yourself: " + userProfileInfo.toString());
+
     }
 }

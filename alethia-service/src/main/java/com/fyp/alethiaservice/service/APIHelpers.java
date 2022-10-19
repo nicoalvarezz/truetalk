@@ -40,6 +40,7 @@ public class APIHelpers {
 
     private static Logger LOGGER = LoggerFactory.getLogger(APIHelpers.class);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static String POST_METHOD = "POST";
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -71,13 +72,13 @@ public class APIHelpers {
         Request request = new Request.Builder()
                 .url(endpoint)
                 .headers(headers)
-                .method("POST", body)
+                .method(method, body)
                 .build();
 
         return request;
     }
 
-    private void renewAccessToken() throws JsonProcessingException {
+    private void renewIdPalAccessToken() throws JsonProcessingException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
                 .clientKey(idpalClientKey)
                 .accessKey(idpalAccessKey)
@@ -87,7 +88,7 @@ public class APIHelpers {
 
         Response responseMap = makeAPIRequest(
                 generateRequest(
-                        "POST",
+                        POST_METHOD,
                         idpalGetAccessTokenEndpoint,
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
                         idpalAccessToken
