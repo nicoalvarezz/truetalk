@@ -1,4 +1,4 @@
-package com.fyp.alethiaservice.dto;
+package com.fyp.alethiaservice.dto.users;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

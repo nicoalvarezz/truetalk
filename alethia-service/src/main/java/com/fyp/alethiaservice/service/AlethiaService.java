@@ -4,19 +4,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fyp.alethiaservice.dto.TriggerVerificationResponse;
-import com.fyp.alethiaservice.dto.IDPalRequest;
-import com.fyp.alethiaservice.dto.PersonalInfoResponse;
-import com.fyp.alethiaservice.dto.UserRequest;
+import com.fyp.alethiaservice.dto.TriggerVerification;
+import com.fyp.alethiaservice.dto.idpal.IDPalRequest;
+import com.fyp.alethiaservice.dto.users.UserProfileInfo;
+import com.fyp.alethiaservice.dto.users.UserRequest;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -33,38 +30,32 @@ public class AlethiaService {
     @Value("${idpal.apiAccess.accessKey}")
     private String idpalAccessKey;
 
-    @Value("${idpal.apiAccess.clientId}")
-    private String idpalClientId;
-
     @Value("${idpal.profileId.standard}")
     private int idpalProfileId;
 
     @Value("${idpal.endpoint.send}")
     private String idpalSendLinkEndpoint;
 
-    @Value("${idpal.endpoint.getAccessToken}")
-    private String idpalGetAccessTokenEndpoint;
-
     @Value("${idpal.apiAccess.accessToken}")
     private String idpalAccessToken;
-
-    @Value("${idpal.apiAccess.refreshToken}")
-    private String idpalRefreshToken;
 
     @Value("${idpal.endpoint.getSubmissionDetails}")
     private String idpalGetSubmissionDetailsEndpoint;
 
+    @Value("${users.endpoint.receive-user-profile}")
+    private String usersReceiveUserProfile;
+
     private static String INFORMATION_TYPE = "email"; // This is only temporal -> I need to decide whether the user can choose or not ???
+    private static Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static String EMPTY_ACCESS_TOKEN = "";
+    private static String POST_METHOD = "POST";
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private static Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
-    private static String ID_PAL_REQUEST_FAILED = "Something occurred with ID-Pal service";
 
-    private final OkHttpClient httpClient = new OkHttpClient();
 
-    public TriggerVerificationResponse triggerVerification(UserRequest registerUserData) throws IOException {
+    public TriggerVerification triggerVerification(UserRequest registerUserData) throws IOException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
                 .clientKey(idpalClientKey)
                 .accessKey(idpalAccessKey)
@@ -73,19 +64,23 @@ public class AlethiaService {
                 .profileId(idpalProfileId)
                 .build();
 
-        Response response = makeRequest(
-                generateIdPalRequest(idpalSendLinkEndpoint,
-                        RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON))
+        Response response = APIHelpers.makeAPIRequest(
+                APIHelpers.generateRequest(
+                        POST_METHOD,
+                        idpalSendLinkEndpoint,
+                        RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
+                        idpalAccessToken
+                )
         );
 
-        TriggerVerificationResponse triggerVerificationResponse = MAPPER.readValue(response.body().string(), TriggerVerificationResponse.class);
+        TriggerVerification triggerVerificationResponse = MAPPER.readValue(response.body().string(), TriggerVerification.class);
         triggerVerificationResponse.setStatusCode(response.code());
 
         LOGGER.info(triggerVerificationResponse.toString());
         return triggerVerificationResponse;
     }
 
-    public PersonalInfoResponse retrieveUserPersonalInfo(int submissionId) throws IOException {
+    public UserProfileInfo retrieveUserPersonalInfo(int submissionId) throws IOException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
                 .clientKey(idpalClientKey)
                 .accessKey(idpalAccessKey)
@@ -93,50 +88,30 @@ public class AlethiaService {
                 .contentDisposition("inline")
                 .build();
 
-        Response response = makeRequest(
-                generateIdPalRequest(idpalGetSubmissionDetailsEndpoint,
-                        RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON))
+        Response response = APIHelpers.makeAPIRequest(
+                APIHelpers.generateRequest(
+                        POST_METHOD,
+                        idpalGetSubmissionDetailsEndpoint,
+                        RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
+                        idpalAccessToken
+                )
         );
 
-        PersonalInfoResponse personalInfoResponse = MAPPER.readValue(response.body().string(), PersonalInfoResponse.class);
-        personalInfoResponse.setStatusCode(response.code());
+        UserProfileInfo personalInfoResponse = MAPPER.readValue(response.body().string(), UserProfileInfo.class);
 
         LOGGER.info(personalInfoResponse.toString());
         return personalInfoResponse;
     }
 
-    private void renewAccessToken() throws JsonProcessingException {
-        IDPalRequest idPalRequest = IDPalRequest.builder()
-                .clientKey(idpalClientKey)
-                .accessKey(idpalAccessKey)
-                .clientId(idpalClientId)
-                .refreshToken(idpalRefreshToken)
-                .build();
-
-        Response responseMap = makeRequest(
-                generateIdPalRequest(idpalGetAccessTokenEndpoint,
-                        RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON))
-        );
-    }
-
-    private Request generateIdPalRequest(String endpoint, RequestBody body) {
-        return new Request.Builder()
-                .url(endpoint)
-                .addHeader("Authorization", "Bearer " + idpalAccessToken)
-                .addHeader("Accept", "application/json")
-                .post(body)
-                .build();
-    }
-
-    private Response makeRequest(Request request) {
-        try {
-            return httpClient.newCall(request).execute();
-        } catch (IOException e) {
-            LOGGER.error(e.toString());
-            return new Response.Builder()
-                    .message(ID_PAL_REQUEST_FAILED)
-                    .code(HttpStatus.OK.value())
-                    .build();
-        }
+    public void sendUserProfileToUserService(UserProfileInfo userProfileInfo) throws JsonProcessingException {
+            Response response = APIHelpers.makeAPIRequest(
+                    APIHelpers.generateRequest(
+                            POST_METHOD,
+                            usersReceiveUserProfile,
+                            RequestBody.create(MAPPER.writeValueAsString(userProfileInfo), JSON),
+                            EMPTY_ACCESS_TOKEN
+                    )
+            );
+            LOGGER.info(response.toString());
     }
 }
