@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 
-public class APIHelpers {
+public class ApiHelpers {
 
     @Value("${idpal.apiAccess.clientKey}")
     private String idpalClientKey;
@@ -38,22 +38,23 @@ public class APIHelpers {
     @Value("${idpal.apiAccess.accessToken}")
     private String idpalAccessToken;
 
-    private static Logger LOGGER = LoggerFactory.getLogger(APIHelpers.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ApiHelpers.class);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static String POST_METHOD = "POST";
+    private static final String REQUEST_EXCEPTION = "Something occurred down the service that has been called";
+    private static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    private static final OkHttpClient httpClient = new OkHttpClient();
 
     public static Response makeAPIRequest(Request request) {
         try {
-            return httpClient.newCall(request).execute();
+            return HTTP_CLIENT.newCall(request).execute();
         } catch (IOException e) {
             LOGGER.error(e.toString());
             return new Response.Builder()
-                    .message("Something occurred down the serviced you called")
+                    .message(REQUEST_EXCEPTION)
                     .code(HttpStatus.OK.value())
                     .build();
         }

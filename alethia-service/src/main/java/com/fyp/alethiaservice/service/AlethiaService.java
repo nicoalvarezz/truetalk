@@ -64,8 +64,8 @@ public class AlethiaService {
                 .profileId(idpalProfileId)
                 .build();
 
-        Response response = APIHelpers.makeAPIRequest(
-                APIHelpers.generateRequest(
+        Response response = ApiHelpers.makeAPIRequest(
+                ApiHelpers.generateRequest(
                         POST_METHOD,
                         idpalSendLinkEndpoint,
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
@@ -88,8 +88,8 @@ public class AlethiaService {
                 .contentDisposition("inline")
                 .build();
 
-        Response response = APIHelpers.makeAPIRequest(
-                APIHelpers.generateRequest(
+        Response response = ApiHelpers.makeAPIRequest(
+                ApiHelpers.generateRequest(
                         POST_METHOD,
                         idpalGetSubmissionDetailsEndpoint,
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
@@ -104,8 +104,8 @@ public class AlethiaService {
     }
 
     public void sendUserProfileToUserService(UserProfileInfo userProfileInfo) throws JsonProcessingException {
-            Response response = APIHelpers.makeAPIRequest(
-                    APIHelpers.generateRequest(
+            Response response = ApiHelpers.makeAPIRequest(
+                    ApiHelpers.generateRequest(
                             POST_METHOD,
                             usersReceiveUserProfile,
                             RequestBody.create(MAPPER.writeValueAsString(userProfileInfo), JSON),
