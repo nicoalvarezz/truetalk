@@ -29,6 +29,6 @@ public class UserController {
     @PostMapping("/receive-user-profile")
     @ResponseBody
     public void receiveUserInformation(@RequestBody UserProfileInfo userProfileInfo) {
-
+        System.out.println("Thanks for the userProfileInfo alethia-service, have a look: " + userProfileInfo.toString());
     }
 }
