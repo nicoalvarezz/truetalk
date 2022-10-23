@@ -12,14 +12,14 @@ services:
     ports:
       - '8000:8000'
 
-  user-service-db:
-    container_name: user_service_db
-    image: postgres
-    ports:
-      - '5432:5432'
-    restart: unless-stopped
-    env_file:
-      - user-service/user-service-db-credentials.env
+#  user-service-db:
+#    container_name: user_service_db
+#    image: postgres
+#    ports:
+#      - '5432:5432'
+#    restart: unless-stopped
+#    env_file:
+#      - user-service/user-service-db-credentials.env
 
   alethia-service:
     container_name: alethia_service
