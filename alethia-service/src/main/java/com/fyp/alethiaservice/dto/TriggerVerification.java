@@ -18,6 +18,4 @@ import lombok.NoArgsConstructor;
         @JsonProperty("status")
         @JsonIgnore
         private int statusCode;
-
-        private String uuid;
     }
