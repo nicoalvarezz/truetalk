@@ -6,6 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.TriggerVerificationResponse;
 import com.fyp.userservice.dto.RegisterUserRequest;
+import com.fyp.userservice.dto.UserProfileInfo;
+import com.fyp.userservice.model.User;
+import com.fyp.userservice.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -19,10 +23,13 @@ import java.io.IOException;
 
 @Service
 @Component
+@RequiredArgsConstructor
 public class UserService {
 
     @Value("${alethia.endpoint.triggerVerification}")
     private String alethiaTriggerVerificationEndpoint;
+
+    private final UserRepository userRepository;
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
@@ -53,5 +60,26 @@ public class UserService {
 
         LOGGER.info(triggerVerificationResponse.toString());
         return triggerVerificationResponse;
+    }
+
+    public void saveUserProfileInfo(UserProfileInfo userProfileInfo) {
+        User user = User.builder()
+                .firstName(userProfileInfo.getFirstName())
+                .lastName(userProfileInfo.getLastName())
+                .email(userProfileInfo.getEmail())
+                .phoneCountryCode(userProfileInfo.getPhoneCountryCode())
+                .phoneNumber(userProfileInfo.getPhoneNumber())
+                .dateOfBirth(userProfileInfo.getDateOfBirth())
+                .countryOfBirth(userProfileInfo.getCountryOfBirth())
+                .address1(userProfileInfo.getAddress1())
+                .address2(userProfileInfo.getAddress2())
+                .city(userProfileInfo.getCity())
+                .county(userProfileInfo.getCounty())
+                .countryName(userProfileInfo.getCountryName())
+                .postalCode(userProfileInfo.getPostalCode())
+                .build();
+
+        userRepository.save(user);
+        LOGGER.info("User {} is saved in the db successfully", user.getId());
     }
 }
