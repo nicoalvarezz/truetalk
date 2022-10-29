@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fyp.alethiaservice.config.IDPalProperties;
+import com.fyp.alethiaservice.config.IdPalProperties;
 import com.fyp.alethiaservice.config.UserServiceProperties;
 import com.fyp.alethiaservice.dto.TriggerVerification;
 import com.fyp.alethiaservice.dto.idpal.IDPalRequest;
@@ -25,7 +25,7 @@ import java.io.IOException;
 public class AlethiaService {
 
     @Autowired
-    private IDPalProperties idPalProperties;
+    private IdPalProperties idPalProperties;
 
     @Autowired
     private UserServiceProperties userServiceProperties;
