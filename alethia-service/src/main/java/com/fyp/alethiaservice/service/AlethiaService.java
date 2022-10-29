@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fyp.alethiaservice.config.IDPalProperties;
+import com.fyp.alethiaservice.config.UserServiceProperties;
 import com.fyp.alethiaservice.dto.TriggerVerification;
 import com.fyp.alethiaservice.dto.idpal.IDPalRequest;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
@@ -13,43 +15,27 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 
 @Service
-@Component
 public class AlethiaService {
 
-    @Value("${idpal.apiAccess.clientKey}")
-    private String idpalClientKey;
+    @Autowired
+    private IDPalProperties idPalProperties;
 
-    @Value("${idpal.apiAccess.accessKey}")
-    private String idpalAccessKey;
-
-    @Value("${idpal.profileId.standard}")
-    private int idpalProfileId;
-
-    @Value("${idpal.endpoint.send}")
-    private String idpalSendLinkEndpoint;
-
-    @Value("${idpal.apiAccess.accessToken}")
-    private String idpalAccessToken;
-
-    @Value("${idpal.endpoint.getSubmissionDetails}")
-    private String idpalGetSubmissionDetailsEndpoint;
-
-    @Value("${users.endpoint.receive-user-profile}")
-    private String usersReceiveUserProfile;
+    @Autowired
+    private UserServiceProperties userServiceProperties;
 
     private static String INFORMATION_TYPE = "email"; // This is only temporal -> I need to decide whether the user can choose or not ???
     private static Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static String EMPTY_ACCESS_TOKEN = "";
     private static String POST_METHOD = "POST";
+
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -57,19 +43,19 @@ public class AlethiaService {
 
     public TriggerVerification triggerVerification(UserRequest registerUserData) throws IOException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
-                .clientKey(idpalClientKey)
-                .accessKey(idpalAccessKey)
+                .clientKey(idPalProperties.getClientKey())
+                .accessKey(idPalProperties.getAccessKey())
                 .informationType(INFORMATION_TYPE)
                 .contact(registerUserData.getEmail())
-                .profileId(idpalProfileId)
+                .profileId(idPalProperties.getProfileId())
                 .build();
 
         Response response = ApiHelpers.makeAPIRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
-                        idpalSendLinkEndpoint,
+                        idPalProperties.getSendVerificationLink(),
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
-                        idpalAccessToken
+                        idPalProperties.getAccessToken()
                 )
         );
 
@@ -82,8 +68,8 @@ public class AlethiaService {
 
     public UserProfileInfo retrieveUserPersonalInfo(int submissionId) throws IOException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
-                .clientKey(idpalClientKey)
-                .accessKey(idpalAccessKey)
+                .clientKey(idPalProperties.getClientKey())
+                .accessKey(idPalProperties.getAccessKey())
                 .submissionId(submissionId)
                 .contentDisposition("inline")
                 .build();
@@ -91,9 +77,9 @@ public class AlethiaService {
         Response response = ApiHelpers.makeAPIRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
-                        idpalGetSubmissionDetailsEndpoint,
+                        idPalProperties.getGetSubmissionDetailsEndpoint(),
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
-                        idpalAccessToken
+                        idPalProperties.getAccessToken()
                 )
         );
 
@@ -107,7 +93,7 @@ public class AlethiaService {
             Response response = ApiHelpers.makeAPIRequest(
                     ApiHelpers.generateRequest(
                             POST_METHOD,
-                            usersReceiveUserProfile,
+                            userServiceProperties.getReceiveUserProfileEndpoint(),
                             RequestBody.create(MAPPER.writeValueAsString(userProfileInfo), JSON),
                             EMPTY_ACCESS_TOKEN
                     )
