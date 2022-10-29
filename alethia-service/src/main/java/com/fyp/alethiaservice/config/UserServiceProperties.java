@@ -1,20 +1,20 @@
 package com.fyp.alethiaservice.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-
-@ConfigurationProperties(prefix = "users")
-@ConfigurationPropertiesScan
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Component
 public class UserServiceProperties {
-    private HashMap<String, String> endpoint;
+
+    private final String receiveUserProfileEndpoint;
+
+    public UserServiceProperties(
+            @Value("${users.endpoint.receive-user-profile}") String receiveUserProfileEndpoint
+    ) {
+        this.receiveUserProfileEndpoint = receiveUserProfileEndpoint;
+    }
+
+    public String getReceiveUserProfileEndpoint() {
+        return receiveUserProfileEndpoint;
+    }
 }

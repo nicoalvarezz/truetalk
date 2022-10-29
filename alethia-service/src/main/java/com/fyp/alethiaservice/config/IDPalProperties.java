@@ -1,22 +1,58 @@
 package com.fyp.alethiaservice.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 
-@ConfigurationProperties(prefix = "idpal")
-@ConfigurationPropertiesScan
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Component
 public class IDPalProperties {
-    private HashMap<String, String> apiAccess;
-    private HashMap<String, Integer> profileId;
-    private HashMap<String, String> endpoint;
+
+    private final String clientKey;
+    private final String accessKey;
+    private final int profileId;
+    private final String sendVerificationLink;
+    private String accessToken;
+    private String getSubmissionDetailsEndpoint;
+
+    @Autowired
+    public IDPalProperties(
+            @Value("${idpal.apiAccess.clientKey}") String clientKey,
+            @Value("${idpal.apiAccess.accessKey}") String accessKey,
+            @Value("${idpal.profileId.standard}") int profileId,
+            @Value("${idpal.endpoint.sendVerificationLink}") String sendVerificationLink,
+            @Value("${idpal.apiAccess.accessToken}") String accessToken,
+            @Value("${idpal.endpoint.getSubmissionDetails}") String getSubmissionDetailsEndpoint
+    ) {
+        this.clientKey = clientKey;
+        this.accessKey = accessKey;
+        this.profileId = profileId;
+        this.sendVerificationLink = sendVerificationLink;
+        this.accessToken = accessToken;
+        this.getSubmissionDetailsEndpoint = getSubmissionDetailsEndpoint;
+    }
+
+    public String getClientKey() {
+        return clientKey;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public int getProfileId() {
+        return profileId;
+    }
+
+    public String getSendVerificationLink() {
+        return sendVerificationLink;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getGetSubmissionDetailsEndpoint() {
+        return getSubmissionDetailsEndpoint;
+    }
 }
