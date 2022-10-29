@@ -55,7 +55,7 @@ public class AlethiaService {
                         POST_METHOD,
                         idPalProperties.getSendVerificationLink(),
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
-                        idPalProperties.getAccessKey()
+                        idPalProperties.getAccessToken()
                 )
         );
 
