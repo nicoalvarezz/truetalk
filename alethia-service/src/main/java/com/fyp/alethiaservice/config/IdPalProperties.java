@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class IDPalProperties {
+public class IdPalProperties {
 
     private final String clientKey;
     private final String accessKey;
@@ -16,7 +16,7 @@ public class IDPalProperties {
     private String getSubmissionDetailsEndpoint;
 
     @Autowired
-    public IDPalProperties(
+    public IdPalProperties(
             @Value("${idpal.apiAccess.clientKey}") String clientKey,
             @Value("${idpal.apiAccess.accessKey}") String accessKey,
             @Value("${idpal.profileId.standard}") int profileId,

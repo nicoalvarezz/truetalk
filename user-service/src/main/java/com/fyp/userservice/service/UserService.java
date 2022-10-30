@@ -3,10 +3,11 @@ package com.fyp.userservice.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.TriggerVerificationResponse;
 import com.fyp.userservice.dto.RegisterUserRequest;
-import com.fyp.userservice.dto.UserProfileInfo;
+import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.model.User;
 import com.fyp.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +27,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class UserService {
 
-    @Value("${alethia.endpoint.triggerVerification}")
-    private String alethiaTriggerVerificationEndpoint;
+    @Autowired
+    private AlethiaProperties alethiaProperties;
 
     private final UserRepository userRepository;
 
@@ -49,7 +50,7 @@ public class UserService {
         Response response = ApiHelpers.makeAPIRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
-                        alethiaTriggerVerificationEndpoint,
+                        alethiaProperties.getAlethiaTriggerVerificationEndpoint(),
                         RequestBody.create(MAPPER.writeValueAsString(alethiaRequest), JSON),
                         EMPTY_ACCESS_TOKEN
                 )
@@ -62,7 +63,7 @@ public class UserService {
         return triggerVerificationResponse;
     }
 
-    public void saveUserProfileInfo(UserProfileInfo userProfileInfo) {
+    public void saveUserProfileInfo(UserProfile userProfileInfo) {
         User user = User.builder()
                 .firstName(userProfileInfo.getFirstName())
                 .lastName(userProfileInfo.getLastName())

@@ -2,7 +2,7 @@ package com.fyp.userservice.controller;
 
 import com.fyp.userservice.dto.TriggerVerificationResponse;
 import com.fyp.userservice.dto.RegisterUserRequest;
-import com.fyp.userservice.dto.UserProfileInfo;
+import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +28,7 @@ public class UserController {
 
     @PostMapping("/receive-user-profile")
     @ResponseBody
-    public void receiveUserInformation(@RequestBody UserProfileInfo userProfileInfo) {
+    public void receiveUserInformation(@RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
     }
 }

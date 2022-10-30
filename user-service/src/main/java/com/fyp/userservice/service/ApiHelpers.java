@@ -18,12 +18,8 @@ import java.io.IOException;
 public class ApiHelpers {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ApiHelpers.class);
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
     private static final String REQUEST_EXCEPTION = "Something occurred down the service that has been called";
-    private static ObjectMapper MAPPER = new ObjectMapper()
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public static Response makeAPIRequest(Request request) {
         try {
