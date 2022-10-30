@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.alethiaservice.config.IdPalProperties;
 import com.fyp.alethiaservice.config.UserServiceProperties;
-import com.fyp.alethiaservice.dto.TriggerVerification;
 import com.fyp.alethiaservice.dto.idpal.IDPalRequest;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
@@ -41,7 +40,7 @@ public class AlethiaService {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 
-    public TriggerVerification triggerVerification(UserRequest registerUserData) throws IOException {
+    public void triggerVerification(UserRequest registerUserData) throws IOException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
                 .clientKey(idPalProperties.getClientKey())
                 .accessKey(idPalProperties.getAccessKey())
@@ -50,7 +49,7 @@ public class AlethiaService {
                 .profileId(idPalProperties.getProfileId())
                 .build();
 
-        Response response = ApiHelpers.makeAPIRequest(
+        ApiHelpers.makeAPIRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
                         idPalProperties.getSendVerificationLink(),
@@ -58,12 +57,6 @@ public class AlethiaService {
                         idPalProperties.getAccessToken()
                 )
         );
-
-        TriggerVerification triggerVerificationResponse = MAPPER.readValue(response.body().string(), TriggerVerification.class);
-        triggerVerificationResponse.setStatusCode(response.code());
-
-        LOGGER.info(triggerVerificationResponse.toString());
-        return triggerVerificationResponse;
     }
 
     public UserProfileInfo retrieveUserPersonalInfo(int submissionId) throws IOException {
@@ -90,14 +83,13 @@ public class AlethiaService {
     }
 
     public void sendUserProfileToUserService(UserProfileInfo userProfileInfo) throws JsonProcessingException {
-            Response response = ApiHelpers.makeAPIRequest(
-                    ApiHelpers.generateRequest(
-                            POST_METHOD,
-                            userServiceProperties.getReceiveUserProfileEndpoint(),
-                            RequestBody.create(MAPPER.writeValueAsString(userProfileInfo), JSON),
-                            EMPTY_ACCESS_TOKEN
-                    )
-            );
-            LOGGER.info(response.toString());
+        ApiHelpers.makeAPIRequest(
+                ApiHelpers.generateRequest(
+                        POST_METHOD,
+                        userServiceProperties.getReceiveUserProfileEndpoint(),
+                        RequestBody.create(MAPPER.writeValueAsString(userProfileInfo), JSON),
+                        EMPTY_ACCESS_TOKEN
+                )
+        );
     }
 }
