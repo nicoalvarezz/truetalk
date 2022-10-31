@@ -1,12 +1,13 @@
 package com.fyp.alethiaservice.controller;
 
-import com.fyp.alethiaservice.dto.TriggerVerification;
 import com.fyp.alethiaservice.dto.idpal.IDPalWebhookRequest;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
+import com.fyp.alethiaservice.handlers.ResponseHandler;
 import com.fyp.alethiaservice.service.AlethiaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,13 +27,15 @@ public class AlethiaController {
     @PostMapping("/trigger-verification")
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
-    public TriggerVerification triggerVerification(@RequestBody UserRequest userRequest) throws IOException {
-        return alethiaService.triggerVerification(userRequest);
+    public ResponseEntity<Object> triggerVerification(@RequestBody UserRequest userRequest) throws IOException {
+        alethiaService.triggerVerification(userRequest);
+        return ResponseHandler.generateSimpleResponse("Verification link sent", HttpStatus.OK);
     }
 
     @PostMapping("/webhook-receiver")
-    public void webhookReceiver(@RequestBody IDPalWebhookRequest idPalWebhookRequest) throws IOException {
+    public ResponseEntity<Object> webhookReceiver(@RequestBody IDPalWebhookRequest idPalWebhookRequest) throws IOException {
         UserProfileInfo userPersonalInfo = alethiaService.retrieveUserPersonalInfo(idPalWebhookRequest.getSubmissionId());
         alethiaService.sendUserProfileToUserService(userPersonalInfo);
+        return ResponseHandler.generateSimpleResponse("Webhook received", HttpStatus.OK);
     }
 }
