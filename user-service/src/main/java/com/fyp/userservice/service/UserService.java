@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
-import com.fyp.userservice.dto.TriggerVerificationResponse;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.model.User;
@@ -13,7 +12,6 @@ import com.fyp.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,21 +31,22 @@ public class UserService {
     private final UserRepository userRepository;
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-    private static String POST_METHOD = "POST";
-    private static String EMPTY_ACCESS_TOKEN = "";
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    private static final String POST_METHOD = "POST";
+    private static final String EMPTY_ACCESS_TOKEN = "";
+
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 
-    public TriggerVerificationResponse triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
+    public void triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
         AlethiaRequest alethiaRequest = AlethiaRequest.builder()
                 .email(registerUserRequest.getEmail())
                 .phoneNumber(registerUserRequest.getPhoneNumber())
                 .build();
 
-        Response response = ApiHelpers.makeAPIRequest(
+        ApiHelpers.makeAPIRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
                         alethiaProperties.getAlethiaTriggerVerificationEndpoint(),
@@ -55,12 +54,6 @@ public class UserService {
                         EMPTY_ACCESS_TOKEN
                 )
         );
-
-        TriggerVerificationResponse triggerVerificationResponse = MAPPER.readValue(response.body().string(), TriggerVerificationResponse.class);
-        triggerVerificationResponse.setStatusCode(response.code());
-
-        LOGGER.info(triggerVerificationResponse.toString());
-        return triggerVerificationResponse;
     }
 
     public void saveUserProfileInfo(UserProfile userProfileInfo) {

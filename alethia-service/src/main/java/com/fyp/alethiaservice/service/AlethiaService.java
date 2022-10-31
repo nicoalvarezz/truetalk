@@ -29,11 +29,11 @@ public class AlethiaService {
     @Autowired
     private UserServiceProperties userServiceProperties;
 
-    private static String INFORMATION_TYPE = "email"; // This is only temporal -> I need to decide whether the user can choose or not ???
-    private static Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
+    private static final String INFORMATION_TYPE = "email"; // This is only temporal -> I need to decide whether the user can choose or not ???
+    private static final Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private static String EMPTY_ACCESS_TOKEN = "";
-    private static String POST_METHOD = "POST";
+    private static final String EMPTY_ACCESS_TOKEN = "";
+    private static final String POST_METHOD = "POST";
 
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)

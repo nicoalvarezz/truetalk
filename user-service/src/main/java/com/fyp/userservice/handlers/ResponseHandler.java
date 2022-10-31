@@ -1,4 +1,5 @@
-package com.fyp.alethiaservice.handlers;
+package com.fyp.userservice.handlers;
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,14 +11,14 @@ import java.util.Map;
 
 public class ResponseHandler {
 
-    private static final String SERVICE = "alethia-service";
+    private static final String SERVICE = "user-service";
 
     public static ResponseEntity<Object> generateSimpleResponse(String message, HttpStatus status) {
         Map<String, Object> map = new HashMap<>();
         map.put("message", message);
         map.put("status_code", status.value());
         map.put("service", SERVICE);
-        map.put("timestamp", ZonedDateTime.now(ZoneId.of("Z")).toString());
+        map.put("timestamp", ZonedDateTime.now(ZoneId.of("Z")));
 
         return new ResponseEntity<>(map, status);
     }
