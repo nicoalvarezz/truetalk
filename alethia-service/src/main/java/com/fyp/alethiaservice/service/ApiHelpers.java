@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class ApiHelpers {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ApiHelpers.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiHelpers.class);
     private static final String REQUEST_EXCEPTION = "Something occurred down the service that has been called";
     private static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
 

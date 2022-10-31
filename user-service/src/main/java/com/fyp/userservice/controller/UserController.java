@@ -1,10 +1,12 @@
 package com.fyp.userservice.controller;
 
-import com.fyp.userservice.dto.TriggerVerificationResponse;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
+import com.fyp.userservice.handlers.ResponseHandler;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,13 +24,15 @@ public class UserController {
 
     @PostMapping("/trigger-alethia-verification")
     @ResponseBody
-    public TriggerVerificationResponse triggerAlethiaVerification(@RequestBody RegisterUserRequest registerUserRequest) throws IOException {
-        return userService.triggerAlethiaVerification(registerUserRequest);
+    public ResponseEntity<Object> triggerAlethiaVerification(@RequestBody RegisterUserRequest registerUserRequest) throws IOException {
+        userService.triggerAlethiaVerification(registerUserRequest);
+        return ResponseHandler.generateSimpleResponse("Verification triggered in alethia", HttpStatus.OK);
     }
 
     @PostMapping("/receive-user-profile")
     @ResponseBody
-    public void receiveUserInformation(@RequestBody UserProfile userProfileInfo) {
+    public ResponseEntity<Object> receiveUserInformation(@RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
+        return ResponseHandler.generateSimpleResponse("User profile information received and saved", HttpStatus.OK);
     }
 }
