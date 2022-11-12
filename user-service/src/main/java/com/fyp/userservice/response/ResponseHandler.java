@@ -1,4 +1,4 @@
-package com.fyp.userservice.handlers;
+package com.fyp.userservice.response;
 
 
 import org.springframework.http.HttpStatus;

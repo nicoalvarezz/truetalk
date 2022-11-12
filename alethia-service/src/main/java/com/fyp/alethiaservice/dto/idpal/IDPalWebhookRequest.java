@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 public class IDPalWebhookRequest {
 
     @NotNull
-    @NotBlank
     @JsonProperty("event_id")
     private int eventId;
 
@@ -30,7 +29,6 @@ public class IDPalWebhookRequest {
     private String uuid;
 
     @NotNull
-    @NotBlank
     @JsonProperty("submission_id")
     private int submissionId;
 
