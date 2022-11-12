@@ -37,6 +37,18 @@
 			<artifactId>okhttp</artifactId>
 			<version>4.2.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.1.5.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>2.3.1.RELEASE</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
