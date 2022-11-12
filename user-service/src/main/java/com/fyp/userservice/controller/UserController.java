@@ -2,7 +2,7 @@ package com.fyp.userservice.controller;
 
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
-import com.fyp.userservice.handlers.ResponseHandler;
+import com.fyp.userservice.response.ResponseHandler;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
@@ -24,7 +25,7 @@ public class UserController {
 
     @PostMapping("/trigger-alethia-verification")
     @ResponseBody
-    public ResponseEntity<Object> triggerAlethiaVerification(@RequestBody RegisterUserRequest registerUserRequest) throws IOException {
+    public ResponseEntity<Object> triggerAlethiaVerification(@Valid @RequestBody RegisterUserRequest registerUserRequest) throws IOException {
         userService.triggerAlethiaVerification(registerUserRequest);
         return ResponseHandler.generateSimpleResponse("Verification triggered in alethia", HttpStatus.OK);
     }
