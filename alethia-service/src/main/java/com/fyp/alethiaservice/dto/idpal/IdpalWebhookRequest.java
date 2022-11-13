@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class IDPalWebhookRequest {
+public class IdpalWebhookRequest {
 
     @NotNull
     @JsonProperty("event_id")

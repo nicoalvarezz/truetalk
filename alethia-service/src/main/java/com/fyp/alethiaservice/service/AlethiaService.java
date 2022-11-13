@@ -91,7 +91,6 @@ public class AlethiaService {
 
         UserProfileInfo userProfileInfo = MAPPER.readValue(response.body().string(), UserProfileInfo.class);
 
-        LOGGER.info(userProfileInfo.toString());
         return userProfileInfo;
     }
 

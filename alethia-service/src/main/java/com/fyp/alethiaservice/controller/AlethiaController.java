@@ -1,19 +1,16 @@
 package com.fyp.alethiaservice.controller;
 
-import com.fyp.alethiaservice.dto.idpal.IDPalWebhookRequest;
+import com.fyp.alethiaservice.dto.idpal.IdpalWebhookRequest;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
-import com.fyp.alethiaservice.exception.IdpalRequestException;
 import com.fyp.alethiaservice.response.ResponseHandler;
 import com.fyp.alethiaservice.service.AlethiaService;
 import lombok.RequiredArgsConstructor;
-import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -33,7 +30,7 @@ public class AlethiaController {
     }
 
     @PostMapping("/webhook-receiver")
-    public ResponseEntity<Object> webhookReceiver(@Valid @RequestBody IDPalWebhookRequest idPalWebhookRequest) throws IOException {
+    public ResponseEntity<Object> webhookReceiver(@Valid @RequestBody IdpalWebhookRequest idPalWebhookRequest) throws IOException {
         UserProfileInfo userPersonalInfo = alethiaService.retrieveUserPersonalInfo(idPalWebhookRequest.getSubmissionId());
         alethiaService.sendUserProfileToUserService(userPersonalInfo);
         return ResponseHandler.generateSimpleResponse("Webhook received", HttpStatus.OK);
