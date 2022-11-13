@@ -9,12 +9,14 @@ import com.fyp.alethiaservice.config.UserServiceProperties;
 import com.fyp.alethiaservice.dto.idpal.IDPalRequest;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
+import com.fyp.alethiaservice.exception.IdpalRequestException;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -34,6 +36,7 @@ public class AlethiaService {
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final String EMPTY_ACCESS_TOKEN = "";
     private static final String POST_METHOD = "POST";
+    private static final String IDPAL_EXCEPTION_MESSAGE = "An error has occurred with identity versification service services";
 
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
@@ -49,7 +52,7 @@ public class AlethiaService {
                 .profileId(idPalProperties.getProfileId())
                 .build();
 
-        ApiHelpers.makeAPIRequest(
+        Response response = ApiHelpers.makeAPIRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
                         idPalProperties.getSendVerificationLink(),
@@ -57,6 +60,11 @@ public class AlethiaService {
                         idPalProperties.getAccessToken()
                 )
         );
+
+        if (response.code() != HttpStatus.OK.value()) {
+            LOGGER.error(response.toString());
+            throw new IdpalRequestException(IDPAL_EXCEPTION_MESSAGE);
+        }
     }
 
     public UserProfileInfo retrieveUserPersonalInfo(int submissionId) throws IOException {
@@ -76,10 +84,15 @@ public class AlethiaService {
                 )
         );
 
-        UserProfileInfo personalInfoResponse = MAPPER.readValue(response.body().string(), UserProfileInfo.class);
+        if (response.code() != HttpStatus.OK.value()) {
+            LOGGER.error(response.toString());
+            throw new IdpalRequestException(IDPAL_EXCEPTION_MESSAGE);
+        }
 
-        LOGGER.info(personalInfoResponse.toString());
-        return personalInfoResponse;
+        UserProfileInfo userProfileInfo = MAPPER.readValue(response.body().string(), UserProfileInfo.class);
+
+        LOGGER.info(userProfileInfo.toString());
+        return userProfileInfo;
     }
 
     public void sendUserProfileToUserService(UserProfileInfo userProfileInfo) throws JsonProcessingException {

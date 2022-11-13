@@ -3,9 +3,11 @@ package com.fyp.alethiaservice.controller;
 import com.fyp.alethiaservice.dto.idpal.IDPalWebhookRequest;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
+import com.fyp.alethiaservice.exception.IdpalRequestException;
 import com.fyp.alethiaservice.response.ResponseHandler;
 import com.fyp.alethiaservice.service.AlethiaService;
 import lombok.RequiredArgsConstructor;
+import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +27,6 @@ public class AlethiaController {
     private final AlethiaService alethiaService;
 
     @PostMapping("/trigger-verification")
-    @ResponseBody
     public ResponseEntity<Object> triggerVerification(@Valid @RequestBody UserRequest userRequest) throws IOException {
         alethiaService.triggerVerification(userRequest);
         return ResponseHandler.generateSimpleResponse("Verification link sent", HttpStatus.OK);
