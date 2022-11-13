@@ -1,4 +1,4 @@
-package com.fyp.alethiaservice.exception;
+package com.fyp.userservice.exception;
 
 import org.springframework.http.HttpStatus;
 import java.time.ZonedDateTime;

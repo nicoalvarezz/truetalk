@@ -32,7 +32,7 @@ public class UserController {
 
     @PostMapping("/receive-user-profile")
     @ResponseBody
-    public ResponseEntity<Object> receiveUserInformation(@RequestBody UserProfile userProfileInfo) {
+    public ResponseEntity<Object> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
         return ResponseHandler.generateSimpleResponse("User profile information received and saved", HttpStatus.OK);
     }
