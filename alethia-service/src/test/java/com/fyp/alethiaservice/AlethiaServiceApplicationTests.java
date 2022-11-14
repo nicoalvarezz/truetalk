@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -42,14 +43,16 @@ class AlethiaServiceApplicationTests {
 		ApiResponse response = MAPPER.readValue(result.getResponse().getContentAsString(), ApiResponse.class);
 
 		assertThat(response.getMessage()).isEqualTo("Verification link sent");
-
+		assertThat(response.getMethod()).isEqualTo(HttpStatus.OK);
+		assertThat(response.getService()).isEqualTo("alethia-service");
 	}
 
 	@Test
 	void testTriggerVerificationLinkNotSent() throws Exception {
 		performPost(TRIGGER_VERIFICATION_ENDPOINT,
 										MAPPER.writeValueAsString(getUserRequest(INVALID_EMAIL, INVALID_PHONE_NUMBER)))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest())
+				.andReturn();
 	}
 
 	private UserRequest getUserRequest(String email, String phoneNumber) {

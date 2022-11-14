@@ -32,12 +32,12 @@ public class ApiHelpers {
     public static Request generateRequest(String method, String endpoint, RequestBody body, String accessToken) {
         Headers headers = !accessToken.isEmpty()
                             ? new Headers.Builder()
-                                .add("Accept", "application/json")
-                                .add("Authorization", "Bearer " + accessToken)
-                                .build()
-                            : new Headers.Builder()
-                                .add("Accept", "application/json")
-                                .build();
+                        .add("Accept", "application/json")
+                        .add("Authorization", "Bearer " + accessToken)
+                        .build()
+                        : new Headers.Builder()
+                        .add("Accept", "application/json")
+                        .build();
 
         Request request = new Request.Builder()
                 .url(endpoint)
