@@ -36,7 +36,7 @@ public class AlethiaService {
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final String EMPTY_ACCESS_TOKEN = "";
     private static final String POST_METHOD = "POST";
-    private static final String IDPAL_EXCEPTION_MESSAGE = "An error has occurred with identity versification service services";
+    private static final String IDPAL_EXCEPTION_MESSAGE = "An error has occurred with identity verification service services";
 
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
@@ -91,7 +91,6 @@ public class AlethiaService {
 
         UserProfileInfo userProfileInfo = MAPPER.readValue(response.body().string(), UserProfileInfo.class);
 
-        LOGGER.info(userProfileInfo.toString());
         return userProfileInfo;
     }
 
