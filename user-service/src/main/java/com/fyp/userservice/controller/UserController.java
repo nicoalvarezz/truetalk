@@ -34,6 +34,6 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<Object> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
-        return ResponseHandler.generateSimpleResponse("User profile information received and saved", HttpStatus.OK);
+        return ResponseHandler.generateSimpleResponse("User profile information received and user created", HttpStatus.CREATED);
     }
 }
