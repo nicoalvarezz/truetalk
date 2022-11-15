@@ -27,13 +27,13 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<Object> triggerAlethiaVerification(@Valid @RequestBody RegisterUserRequest registerUserRequest) throws IOException {
         userService.triggerAlethiaVerification(registerUserRequest);
-        return ResponseHandler.generateSimpleResponse("Verification triggered in alethia", HttpStatus.OK);
+        return ResponseHandler.generateResponse("Verification triggered in alethia", HttpStatus.OK);
     }
 
     @PostMapping("/receive-user-profile")
     @ResponseBody
     public ResponseEntity<Object> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
-        return ResponseHandler.generateSimpleResponse("User profile information received and saved", HttpStatus.OK);
+        return ResponseHandler.generateResponse("User profile information received and user created", HttpStatus.CREATED);
     }
 }

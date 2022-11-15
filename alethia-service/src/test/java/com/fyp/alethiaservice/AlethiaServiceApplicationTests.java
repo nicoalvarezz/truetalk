@@ -2,6 +2,7 @@ package com.fyp.alethiaservice;
 
 import com.fyp.alethiaservice.dto.users.UserRequest;
 import com.fyp.alethiaservice.response.ApiResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,7 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -31,6 +32,7 @@ class AlethiaServiceApplicationTests {
 	private static final String INVALID_EMAIL = "someinvalidemail";
 	private static final String INVALID_PHONE_NUMBER = "353123456782232323232323";
 
+	private static final String SERVICE = "alethia-service";
 	private static final String TRIGGER_VERIFICATION_ENDPOINT = "/api/alethia/trigger-verification";
 
 	@Test
@@ -42,9 +44,9 @@ class AlethiaServiceApplicationTests {
 
 		ApiResponse response = MAPPER.readValue(result.getResponse().getContentAsString(), ApiResponse.class);
 
-		assertThat(response.getMessage()).isEqualTo("Verification link sent");
-		assertThat(response.getMethod()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getService()).isEqualTo("alethia-service");
+		assertEquals(response.getMessage(), "Verification link sent");
+		assertEquals(response.getMethod(), HttpStatus.OK);
+		assertEquals(response.getService(), SERVICE);
 	}
 
 	@Test
