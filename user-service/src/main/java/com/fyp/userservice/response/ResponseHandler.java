@@ -11,7 +11,7 @@ public class ResponseHandler {
 
     private static final String SERVICE = "user-service";
 
-    public static ResponseEntity<Object> generateSimpleResponse(String message, HttpStatus status) {
+    public static ResponseEntity<Object> generateResponse(String message, HttpStatus status) {
         return new ResponseEntity<>(new ApiResponse(
                 message,
                 status.value(),

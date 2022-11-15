@@ -70,7 +70,11 @@ public class UserServiceApplicationTests {
 
     @Test
     void testReceiveUserInformation() throws Exception {
-        String content = MAPPER.writeValueAsString(generateUserProfileRequest());
+        String content = MAPPER.writeValueAsString(generateUserProfileRequest("Nicolas", "Alvarez",
+                VALID_EMAIL, "+353", VALID_PHONE_NUMBER, "2002-05-26",
+                "Spain", "3 Novara Park", "Bray", "Wicklow",
+                "Ireland", "A98 K535"));
+
         MvcResult result = performPost(RECEIVE_USER_PROFILE, content)
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -84,6 +88,16 @@ public class UserServiceApplicationTests {
         assertTrue(userRepository.findAll().size() == 1);
     }
 
+    @Test
+    void testReceiveUserInformationWithBlankData() throws Exception {
+        String content = MAPPER.writeValueAsString(generateUserProfileRequest("", "",
+                VALID_EMAIL, "", VALID_PHONE_NUMBER, "",
+                "", "", "", "",
+                "", ""));
+
+        performPost(RECEIVE_USER_PROFILE, content).andExpect(status().isBadRequest());
+    }
+
     private RegisterUserRequest getRegisterUserRequest(String email, String phoneNumber, String password) {
         return RegisterUserRequest.builder()
                 .email(email)
@@ -92,20 +106,23 @@ public class UserServiceApplicationTests {
                 .build();
     }
 
-    private UserProfile generateUserProfileRequest() {
+    private UserProfile generateUserProfileRequest(String firstName, String lastName, String email,
+                                                   String phoneCountryCode, String phoneNumber, String dateOfBirth,
+                                                   String countryOfBirth, String address1, String city, String county,
+                                                   String countryName, String postalCode) {
         return UserProfile.builder()
-                .firstName("Nicolas")
-                .lastName("Alvarez")
-                .email(VALID_EMAIL)
-                .phoneCountryCode("+353")
-                .phoneNumber(VALID_PHONE_NUMBER)
-                .dateOfBirth("2002-05-16")
-                .countryOfBirth("Spain")
-                .address1("3 Novara Park")
-                .city("Bray")
-                .county("Wicklow")
-                .countryName("Ireland")
-                .postalCode("A98 K535")
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .phoneCountryCode(phoneCountryCode)
+                .phoneNumber(phoneNumber)
+                .dateOfBirth(dateOfBirth)
+                .countryOfBirth(countryOfBirth)
+                .address1(address1)
+                .city(city)
+                .county(county)
+                .countryName(countryName)
+                .postalCode(postalCode)
                 .build();
     }
 
