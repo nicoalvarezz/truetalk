@@ -2,7 +2,7 @@
 FROM maven:3.8.6-amazoncorretto-17 AS build
 COPY alethia-service/src /home/alethia-service/src
 COPY alethia-service/pom.xml /home/alethia-service
-RUN mvn -f /home/alethia-service/pom.xml clean package
+RUN mvn -f /home/alethia-service/pom.xml clean package -Dmaven.test.skip=true
 
 # PACKAGE STAGE
 FROM openjdk:17-jdk-slim
