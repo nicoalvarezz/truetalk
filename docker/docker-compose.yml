@@ -24,11 +24,11 @@ services:
     ports:
       - '4551:4551'
     links:
-      - alethia_service
+      - alethia-service
     environment:
       - REGION=eu
       - DEBUG=true
       - DOMAIN=alethia_service
       - PORT=8001
     depends_on:
-      - alethia_service
+      -   alethia-service

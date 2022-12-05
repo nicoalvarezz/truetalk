@@ -2,7 +2,7 @@
 FROM maven:3.8.6-amazoncorretto-17 AS build
 COPY user-service/src /home/user-service/src
 COPY user-service/pom.xml /home/user-service
-RUN mvn -f /home/user-service/pom.xml clean package
+RUN mvn -f /home/user-service/pom.xml clean package -Dmaven.test.skip=true
 
 # PACKAGE STAGE
 FROM openjdk:17-jdk-slim
