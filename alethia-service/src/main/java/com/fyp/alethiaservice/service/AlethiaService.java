@@ -10,6 +10,7 @@ import com.fyp.alethiaservice.dto.idpal.IDPalRequest;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
 import com.fyp.alethiaservice.exception.IdpalRequestException;
+import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -52,7 +53,7 @@ public class AlethiaService {
                 .profileId(idPalProperties.getProfileId())
                 .build();
 
-        Response response = ApiHelpers.makeAPIRequest(
+        Response response = ApiHelpers.makeApiRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
                         idPalProperties.getSendVerificationLink(),
@@ -75,7 +76,7 @@ public class AlethiaService {
                 .contentDisposition("inline")
                 .build();
 
-        Response response = ApiHelpers.makeAPIRequest(
+        Response response = ApiHelpers.makeApiRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
                         idPalProperties.getGetSubmissionDetailsEndpoint(),
@@ -95,7 +96,7 @@ public class AlethiaService {
     }
 
     public void sendUserProfileToUserService(UserProfileInfo userProfileInfo) throws JsonProcessingException {
-        ApiHelpers.makeAPIRequest(
+        ApiHelpers.makeApiRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
                         userServiceProperties.getReceiveUserProfileEndpoint(),
