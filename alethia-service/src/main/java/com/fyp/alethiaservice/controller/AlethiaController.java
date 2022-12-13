@@ -4,7 +4,7 @@ import com.fyp.alethiaservice.dto.idpal.IdpalWebhookRequest;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
 import com.fyp.alethiaservice.service.AlethiaService;
-import com.fyp.hiveshared.api.response.ResponseHandler;
+import com.fyp.hiveshared.api.responses.ResponseHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
