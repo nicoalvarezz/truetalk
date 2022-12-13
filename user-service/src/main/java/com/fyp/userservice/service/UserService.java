@@ -3,6 +3,7 @@ package com.fyp.userservice.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
@@ -46,7 +47,7 @@ public class UserService {
                 .phoneNumber(registerUserRequest.getPhoneNumber())
                 .build();
 
-        ApiHelpers.makeAPIRequest(
+        ApiHelpers.makeApiRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
                         alethiaProperties.getAlethiaTriggerVerificationEndpoint(),
