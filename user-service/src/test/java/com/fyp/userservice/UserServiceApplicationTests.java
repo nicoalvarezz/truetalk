@@ -1,11 +1,10 @@
 package com.fyp.userservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fyp.hiveshared.api.responses.ResponseBody;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.repository.UserRepository;
-import com.fyp.userservice.response.ApiResponse;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -79,7 +78,7 @@ public class UserServiceApplicationTests {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        ApiResponse response = MAPPER.readValue(result.getResponse().getContentAsString(), ApiResponse.class);
+        ResponseBody response = MAPPER.readValue(result.getResponse().getContentAsString(), ResponseBody.class);
 
         assertEquals("User profile information received and user created", response.getMessage());
         assertEquals(HttpStatus.CREATED, response.getMethod());
