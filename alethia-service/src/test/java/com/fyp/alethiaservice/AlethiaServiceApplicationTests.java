@@ -1,7 +1,7 @@
 package com.fyp.alethiaservice;
 
 import com.fyp.alethiaservice.dto.users.UserRequest;
-import com.fyp.hiveshared.api.response.ApiResponse;
+import com.fyp.hiveshared.api.responses.ResponseBody;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,7 +41,7 @@ class AlethiaServiceApplicationTests {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		ApiResponse response = MAPPER.readValue(result.getResponse().getContentAsString(), ApiResponse.class);
+		ResponseBody response = MAPPER.readValue(result.getResponse().getContentAsString(), ResponseBody.class);
 
 		assertEquals(response.getMessage(), "Verification link sent");
 		assertEquals(response.getMethod(), HttpStatus.OK);

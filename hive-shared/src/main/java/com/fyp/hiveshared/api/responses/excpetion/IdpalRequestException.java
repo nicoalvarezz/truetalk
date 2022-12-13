@@ -1,7 +1,6 @@
-package com.fyp.alethiaservice.exception;
+package com.fyp.hiveshared.api.responses.excpetion;
 
-public class IdpalRequestException extends RuntimeException {
-
+public class IdpalRequestException extends RuntimeException{
     public IdpalRequestException(String message) {
         super(message);
     }
@@ -10,4 +9,3 @@ public class IdpalRequestException extends RuntimeException {
         super(message, cause);
     }
 }
-
