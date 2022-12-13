@@ -1,4 +1,4 @@
-package com.fyp.alethiaservice.exception;
+package com.fyp.hiveshared.api.exception;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,5 +36,3 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ), HttpStatus.SERVICE_UNAVAILABLE);
     }
 }
-
-

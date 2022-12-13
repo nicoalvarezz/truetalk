@@ -1,8 +1,8 @@
-package com.fyp.alethiaservice.exception;
+package com.fyp.hiveshared.api.exception;
 
 import org.springframework.http.HttpStatus;
-import java.time.ZonedDateTime;
 
+import java.time.ZonedDateTime;
 
 public class ApiException {
     private final String message;

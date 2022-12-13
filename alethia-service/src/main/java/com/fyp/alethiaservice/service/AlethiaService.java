@@ -9,7 +9,7 @@ import com.fyp.alethiaservice.config.UserServiceProperties;
 import com.fyp.alethiaservice.dto.idpal.IDPalRequest;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
-import com.fyp.alethiaservice.exception.IdpalRequestException;
+import com.fyp.hiveshared.api.exception.IdpalRequestException;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
