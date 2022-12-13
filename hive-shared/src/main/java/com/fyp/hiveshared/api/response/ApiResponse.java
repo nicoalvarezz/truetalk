@@ -1,8 +1,6 @@
-package com.fyp.alethiaservice.response;
+package com.fyp.hiveshared.api.response;
 
 import org.springframework.http.HttpStatus;
-
-import java.time.ZonedDateTime;
 
 public class ApiResponse {
     private String message;
