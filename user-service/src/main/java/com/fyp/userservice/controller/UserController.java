@@ -1,8 +1,8 @@
 package com.fyp.userservice.controller;
 
+import com.fyp.hiveshared.api.responses.ResponseHandler;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
-import com.fyp.userservice.response.ResponseHandler;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,18 +22,19 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
+    private static final String SERVICE = "user-service";
 
     @PostMapping("/trigger-alethia-verification")
     @ResponseBody
     public ResponseEntity<Object> triggerAlethiaVerification(@Valid @RequestBody RegisterUserRequest registerUserRequest) throws IOException {
         userService.triggerAlethiaVerification(registerUserRequest);
-        return ResponseHandler.generateResponse("Verification triggered in alethia", HttpStatus.OK);
+        return ResponseHandler.serviceResponse("Verification triggered in alethia", HttpStatus.OK, SERVICE);
     }
 
     @PostMapping("/receive-user-profile")
     @ResponseBody
     public ResponseEntity<Object> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
-        return ResponseHandler.generateResponse("User profile information received and user created", HttpStatus.CREATED);
+        return ResponseHandler.serviceResponse("User profile information received and user created", HttpStatus.CREATED, SERVICE);
     }
 }
