@@ -1,4 +1,4 @@
-package com.fyp.alethiaservice.response;
+package com.fyp.hiveshared.api.response;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,14 +8,12 @@ import java.time.ZonedDateTime;
 
 public class ResponseHandler {
 
-    private static final String SERVICE = "alethia-service";
-
-    public static ResponseEntity<Object> generateResponse(String message, HttpStatus status) {
+    public static ResponseEntity<Object> serviceResponse(String message, HttpStatus status, String service) {
         return new ResponseEntity<>(new ApiResponse(
                 message,
                 status.value(),
                 status,
-                SERVICE,
+                service,
                 ZonedDateTime.now(ZoneId.of("Z")).toString()
         ), status);
     }
