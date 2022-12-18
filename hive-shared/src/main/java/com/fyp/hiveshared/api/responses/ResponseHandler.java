@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 public class ResponseHandler {
 
     public static ResponseEntity<Object> serviceResponse(String message, HttpStatus status, String service) {
-        return new ResponseEntity<>(new ResponseBody(
+        return new ResponseEntity<>(new HiveResponseBody(
                 message,
                 status.value(),
                 status,
