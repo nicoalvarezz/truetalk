@@ -1,7 +1,7 @@
 package com.fyp.userservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fyp.hiveshared.api.responses.ResponseBody;
+import com.fyp.hiveshared.api.responses.HiveResponseBody;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.repository.UserRepository;
@@ -78,7 +78,7 @@ public class UserServiceApplicationTests {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        ResponseBody response = MAPPER.readValue(result.getResponse().getContentAsString(), ResponseBody.class);
+        HiveResponseBody response = MAPPER.readValue(result.getResponse().getContentAsString(), HiveResponseBody.class);
 
         assertEquals("User profile information received and user created", response.getMessage());
         assertEquals(HttpStatus.CREATED, response.getMethod());

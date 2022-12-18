@@ -9,8 +9,8 @@ import com.fyp.alethiaservice.config.UserServiceProperties;
 import com.fyp.alethiaservice.dto.idpal.IDPalRequest;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
-import com.fyp.hiveshared.api.responses.excpetion.IdpalRequestException;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
+import com.fyp.hiveshared.api.responses.excpetion.ServiceUnavailableException;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -32,19 +32,19 @@ public class AlethiaService {
     @Autowired
     private UserServiceProperties userServiceProperties;
 
+    private static final String IDPAL_EXCEPTION_MESSAGE = "An error has occurred with identity verification service services";
     private static final String INFORMATION_TYPE = "email"; // This is only temporal -> I need to decide whether the user can choose or not ???
     private static final Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final String EMPTY_ACCESS_TOKEN = "";
     private static final String POST_METHOD = "POST";
-    private static final String IDPAL_EXCEPTION_MESSAGE = "An error has occurred with identity verification service services";
 
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 
-    public void triggerVerification(UserRequest registerUserData) throws IOException {
+    public void triggerVerification(UserRequest registerUserData) throws IOException, ServiceUnavailableException {
         IDPalRequest idPalRequest = IDPalRequest.builder()
                 .clientKey(idPalProperties.getClientKey())
                 .accessKey(idPalProperties.getAccessKey())
@@ -62,9 +62,12 @@ public class AlethiaService {
                 )
         );
 
-        if (response.code() != HttpStatus.OK.value()) {
-            LOGGER.error(response.toString());
-            throw new IdpalRequestException(IDPAL_EXCEPTION_MESSAGE);
+        // TODO:
+        // Create a class in the service layer that is in charge of checking the status of the response
+        // And throw the error
+        // Less clutter in this class
+        if (response.code() == HttpStatus.UNAUTHORIZED.value()) {
+            throw new ServiceUnavailableException(IDPAL_EXCEPTION_MESSAGE);
         }
     }
 
@@ -84,11 +87,6 @@ public class AlethiaService {
                         idPalProperties.getAccessToken()
                 )
         );
-
-        if (response.code() != HttpStatus.OK.value()) {
-            LOGGER.error(response.toString());
-            throw new IdpalRequestException(IDPAL_EXCEPTION_MESSAGE);
-        }
 
         UserProfileInfo userProfileInfo = MAPPER.readValue(response.body().string(), UserProfileInfo.class);
 
