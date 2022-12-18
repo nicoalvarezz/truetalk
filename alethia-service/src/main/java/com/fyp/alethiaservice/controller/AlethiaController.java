@@ -25,7 +25,6 @@ public class AlethiaController {
     private final AlethiaService alethiaService;
     private static final String SERVICE = "alethia-service";
 
-
     @PostMapping("/trigger-verification")
     public ResponseEntity<Object> triggerVerification(@Valid @RequestBody UserRequest userRequest) throws IOException, ServiceUnavailableException {
         alethiaService.triggerVerification(userRequest);
