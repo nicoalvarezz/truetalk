@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import static com.fyp.hiveshared.api.responses.excpetion.ExceptionHandlerResponses.exceptionHandlerResponse;
+import com.fyp.hiveshared.api.responses.excpetion.ExceptionHandlerResponses;
 
 @ControllerAdvice
 public class UserExceptionHandler {
@@ -17,6 +17,6 @@ public class UserExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
-        return exceptionHandlerResponse(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
+        return ExceptionHandlerResponses.exceptionHandlerResponse(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
     }
 }
