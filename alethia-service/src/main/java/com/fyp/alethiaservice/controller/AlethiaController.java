@@ -7,7 +7,6 @@ import com.fyp.alethiaservice.service.AlethiaService;
 import com.fyp.hiveshared.api.responses.ResponseHandler;
 import com.fyp.hiveshared.api.responses.excpetion.ServiceUnavailableException;
 import lombok.RequiredArgsConstructor;
-import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
