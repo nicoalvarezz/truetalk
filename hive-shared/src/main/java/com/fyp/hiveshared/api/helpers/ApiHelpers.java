@@ -1,5 +1,6 @@
 package com.fyp.hiveshared.api.helpers;
 
+import com.auth0.jwt.JWT;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
+import java.util.Date;
 
 public class ApiHelpers {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiHelpers.class);
@@ -43,5 +45,9 @@ public class ApiHelpers {
                 .headers(headers)
                 .method(method, body)
                 .build();
+    }
+
+    public static boolean isAccessTokenExpired(String accessToken) {
+        return JWT.decode(accessToken).getExpiresAt().before(new Date());
     }
 }

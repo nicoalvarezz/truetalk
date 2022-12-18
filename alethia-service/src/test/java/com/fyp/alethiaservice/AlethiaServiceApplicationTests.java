@@ -2,6 +2,7 @@ package com.fyp.alethiaservice;
 
 import com.fyp.alethiaservice.dto.users.UserRequest;
 import com.fyp.hiveshared.api.responses.HiveResponseBody;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,8 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -38,21 +38,21 @@ class AlethiaServiceApplicationTests {
 	void testTriggerVerificationLinkSent() throws Exception {
 		MvcResult result = performPost(TRIGGER_VERIFICATION_ENDPOINT,
 										MAPPER.writeValueAsString(getUserRequest(VALID_EMAIL, VALID_PHONE_NUMBER)))
-				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andReturn();
 
 		HiveResponseBody response = MAPPER.readValue(result.getResponse().getContentAsString(), HiveResponseBody.class);
 
-		assertEquals(response.getMessage(), "Verification link sent");
-		assertEquals(response.getMethod(), HttpStatus.OK);
-		assertEquals(response.getService(), SERVICE);
+		Assertions.assertEquals(response.getMessage(), "Verification link sent");
+		Assertions.assertEquals(response.getMethod(), HttpStatus.OK);
+		Assertions.assertEquals(response.getService(), SERVICE);
 	}
 
 	@Test
 	void testTriggerVerificationLinkNotSent() throws Exception {
 		performPost(TRIGGER_VERIFICATION_ENDPOINT,
 										MAPPER.writeValueAsString(getUserRequest(INVALID_EMAIL, INVALID_PHONE_NUMBER)))
-				.andExpect(status().isBadRequest())
+				.andExpect(MockMvcResultMatchers.status().isBadRequest())
 				.andReturn();
 	}
 

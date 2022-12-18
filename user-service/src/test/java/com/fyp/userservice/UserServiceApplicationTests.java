@@ -21,9 +21,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -75,16 +74,16 @@ public class UserServiceApplicationTests {
                 "Ireland", "A98 K535"));
 
         MvcResult result = performPost(RECEIVE_USER_PROFILE, content)
-                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andReturn();
 
         HiveResponseBody response = MAPPER.readValue(result.getResponse().getContentAsString(), HiveResponseBody.class);
 
-        assertEquals("User profile information received and user created", response.getMessage());
-        assertEquals(HttpStatus.CREATED, response.getMethod());
-        assertEquals(SERVICE, response.getService());
+        Assertions.assertEquals("User profile information received and user created", response.getMessage());
+        Assertions.assertEquals(HttpStatus.CREATED, response.getMethod());
+        Assertions.assertEquals(SERVICE, response.getService());
 
-        assertTrue(userRepository.findAll().size() == 1);
+        Assertions.assertTrue(userRepository.findAll().size() == 1);
     }
 
     @Test
@@ -94,7 +93,7 @@ public class UserServiceApplicationTests {
                 "", "", "", "",
                 "", ""));
 
-        performPost(RECEIVE_USER_PROFILE, content).andExpect(status().isBadRequest());
+        performPost(RECEIVE_USER_PROFILE, content).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     private RegisterUserRequest getRegisterUserRequest(String email, String phoneNumber, String password) {
