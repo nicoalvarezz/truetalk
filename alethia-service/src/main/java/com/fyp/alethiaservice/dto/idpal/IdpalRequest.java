@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class IDPalRequest {
+public class IdpalRequest {
 
     @JsonProperty("client_key")
     private String clientKey;

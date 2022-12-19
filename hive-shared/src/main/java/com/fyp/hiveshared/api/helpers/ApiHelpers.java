@@ -17,6 +17,7 @@ public class ApiHelpers {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiHelpers.class);
     private static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
     private static final String REQUEST_EXCEPTION = "Something occurred down the service that has been called";
+    private static final String TOKEN_TYPE = "Bearer";
 
     public static Response makeApiRequest(Request request) {
         try {
@@ -34,7 +35,7 @@ public class ApiHelpers {
         Headers headers = !accessToken.isEmpty()
                             ? new Headers.Builder()
                                 .add("Accept", "application/json")
-                                .add("Authorization", "Bearer " + accessToken)
+                                .add("Authorization", TOKEN_TYPE + accessToken)
                                 .build()
                             : new Headers.Builder()
                                 .add("Accept", "application/json")
