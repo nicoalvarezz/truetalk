@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.alethiaservice.config.IdPalProperties;
 import com.fyp.alethiaservice.config.UserServiceProperties;
-import com.fyp.alethiaservice.dto.idpal.IDPalRequest;
+import com.fyp.alethiaservice.dto.idpal.IdpalAccessToken;
+import com.fyp.alethiaservice.dto.idpal.IdpalRequest;
+import com.fyp.alethiaservice.dto.idpal.IdpalRenewAccessToken;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
@@ -45,7 +47,9 @@ public class AlethiaService {
 
 
     public void triggerVerification(UserRequest registerUserData) throws IOException, ServiceUnavailableException {
-        IDPalRequest idPalRequest = IDPalRequest.builder()
+        renewIdpalAccessToken();
+
+        IdpalRequest idPalRequest = IdpalRequest.builder()
                 .clientKey(idPalProperties.getClientKey())
                 .accessKey(idPalProperties.getAccessKey())
                 .informationType(INFORMATION_TYPE)
@@ -56,7 +60,7 @@ public class AlethiaService {
         Response response = ApiHelpers.makeApiRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
-                        idPalProperties.getSendVerificationLink(),
+                        idPalProperties.getSendVerificationLinkEndpoint(),
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
                         idPalProperties.getAccessToken()
                 )
@@ -72,7 +76,9 @@ public class AlethiaService {
     }
 
     public UserProfileInfo retrieveUserPersonalInfo(int submissionId) throws IOException {
-        IDPalRequest idPalRequest = IDPalRequest.builder()
+        renewIdpalAccessToken();
+
+        IdpalRequest idPalRequest = IdpalRequest.builder()
                 .clientKey(idPalProperties.getClientKey())
                 .accessKey(idPalProperties.getAccessKey())
                 .submissionId(submissionId)
@@ -102,5 +108,32 @@ public class AlethiaService {
                         EMPTY_ACCESS_TOKEN
                 )
         );
+    }
+
+    public void renewIdpalAccessToken() throws IOException {
+        String accessToken = idPalProperties.getAccessToken();
+        if (!ApiHelpers.isAccessTokenExpired(accessToken)) {
+            return;
+        } else {
+            Response response = ApiHelpers.makeApiRequest(
+                    ApiHelpers.generateRequest(
+                            POST_METHOD,
+                            idPalProperties.getAccessTokenEndpoint(),
+                            RequestBody.create(MAPPER.writeValueAsString(getRenewTokenBody()), JSON),
+                            accessToken
+                    )
+            );
+            IdpalAccessToken tokens = MAPPER.readValue(response.body().string(), IdpalAccessToken.class);
+            idPalProperties.setNewTokens(tokens.getAccessToken(), tokens.getRefreshToken());
+        }
+    }
+
+    private IdpalRenewAccessToken getRenewTokenBody() {
+        return IdpalRenewAccessToken.builder()
+                .clientKey(idPalProperties.getClientKey())
+                .accessKey(idPalProperties.getAccessKey())
+                .clientId(idPalProperties.getClientId())
+                .refreshToken(idPalProperties.getRefreshToken())
+                .build();
     }
 }
