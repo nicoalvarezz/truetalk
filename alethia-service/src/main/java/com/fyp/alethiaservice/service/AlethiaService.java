@@ -110,7 +110,7 @@ public class AlethiaService {
         );
     }
 
-    private void renewIdpalAccessToken() throws IOException {
+    public void renewIdpalAccessToken() throws IOException {
         String accessToken = idPalProperties.getAccessToken();
         if (!ApiHelpers.isAccessTokenExpired(accessToken)) {
             return;
