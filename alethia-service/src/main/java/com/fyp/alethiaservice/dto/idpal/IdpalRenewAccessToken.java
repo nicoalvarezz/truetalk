@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RenewIdpalAccessToken {
+public class IdpalRenewAccessToken {
 
     @JsonProperty("client_key")
     private String clientKey;

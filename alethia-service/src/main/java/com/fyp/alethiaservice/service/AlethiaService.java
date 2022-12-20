@@ -8,7 +8,7 @@ import com.fyp.alethiaservice.config.IdPalProperties;
 import com.fyp.alethiaservice.config.UserServiceProperties;
 import com.fyp.alethiaservice.dto.idpal.IdpalAccessToken;
 import com.fyp.alethiaservice.dto.idpal.IdpalRequest;
-import com.fyp.alethiaservice.dto.idpal.RenewIdpalAccessToken;
+import com.fyp.alethiaservice.dto.idpal.IdpalRenewAccessToken;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
@@ -128,8 +128,8 @@ public class AlethiaService {
         }
     }
 
-    private RenewIdpalAccessToken getRenewTokenBody() {
-        return RenewIdpalAccessToken.builder()
+    private IdpalRenewAccessToken getRenewTokenBody() {
+        return IdpalRenewAccessToken.builder()
                 .clientKey(idPalProperties.getClientKey())
                 .accessKey(idPalProperties.getAccessKey())
                 .clientId(idPalProperties.getClientId())
