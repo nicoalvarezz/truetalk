@@ -30,6 +30,6 @@ public class RegisterUserRequest {
     @NotNull
     @NotBlank
     // Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,200}$")
     private String password;
 }

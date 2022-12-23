@@ -8,8 +8,9 @@ import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
-import com.fyp.userservice.model.User;
+import com.fyp.userservice.model.UserVerifiedProfile;
 import com.fyp.userservice.repository.UserRepository;
+import com.fyp.userservice.repository.UserVerifiedProfileRepository;
 import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -30,6 +31,7 @@ public class UserService {
     private AlethiaProperties alethiaProperties;
 
     private final UserRepository userRepository;
+    private final UserVerifiedProfileRepository userVerifiedProfileRepository;
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
@@ -58,10 +60,9 @@ public class UserService {
     }
 
     public void saveUserProfileInfo(UserProfile userProfileInfo) {
-        User user = User.builder()
+        UserVerifiedProfile userVerifiedProfile = UserVerifiedProfile.builder()
                 .firstName(userProfileInfo.getFirstName())
                 .lastName(userProfileInfo.getLastName())
-                .email(userProfileInfo.getEmail())
                 .phoneCountryCode(userProfileInfo.getPhoneCountryCode())
                 .phoneNumber(userProfileInfo.getPhoneNumber())
                 .dateOfBirth(userProfileInfo.getDateOfBirth())
@@ -74,7 +75,8 @@ public class UserService {
                 .postalCode(userProfileInfo.getPostalCode())
                 .build();
 
-        userRepository.save(user);
-        LOGGER.info("User {} is saved in the db successfully", user.getId());
+
+        userVerifiedProfileRepository.save(userVerifiedProfile);
+        LOGGER.info("User {} is saved in the db successfully", userVerifiedProfile.getId());
     }
 }
