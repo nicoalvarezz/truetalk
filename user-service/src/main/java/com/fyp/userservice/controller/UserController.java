@@ -24,13 +24,12 @@ public class UserController {
     private final UserService userService;
     private static final String SERVICE = "user-service";
 
-    @PostMapping("/register")
+    @PostMapping("/register-user")
     @ResponseBody
-    public ResponseEntity<Object> registerUser(@Valid RegisterUserRequest registerUserRequest) {
+    public ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUserRequest registerUserRequest) {
         // TODO:
-        // simply save the data in the database...
-        // email, password in the user table
         // The the email verification will start
+        userService.registerUser(registerUserRequest);
         return ResponseHandler.serviceResponse("User registered successfully", HttpStatus.CREATED, SERVICE);
     }
 

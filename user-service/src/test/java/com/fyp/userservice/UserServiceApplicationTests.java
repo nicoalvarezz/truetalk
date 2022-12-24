@@ -5,6 +5,8 @@ import com.fyp.hiveshared.api.responses.HiveResponseBody;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.repository.UserRepository;
+import com.fyp.userservice.repository.UserVerifiedProfileRepository;
+import com.fyp.userservice.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -38,6 +40,12 @@ public class UserServiceApplicationTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserVerifiedProfileRepository userVerifiedProfileRepository;
+
+    @Autowired
+    private UserService userService;
+
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final String RECEIVE_USER_PROFILE = "/api/users/receive-user-profile";
@@ -67,8 +75,17 @@ public class UserServiceApplicationTests {
 //    }
 
     @Test
-    void testReceiveUserInformation() throws Exception {
-        String content = MAPPER.writeValueAsString(generateUserProfileRequest("Nicolas", "Alvarez",
+    void testCreateUser() {
+        userService.registerUser(getRegisterUserRequest(VALID_EMAIL, VALID_PHONE_NUMBER, VALID_PASSWORD));
+        Assertions.assertTrue(userRepository.findAll().size() == 1);
+    }
+
+    @Test
+    void testSaveVerifiedUserData() throws Exception {
+        userService.registerUser(getRegisterUserRequest(VALID_EMAIL, VALID_PHONE_NUMBER, VALID_PASSWORD));
+        String uuid = userRepository.findAll().get(0).getId().toString();
+
+        String content = MAPPER.writeValueAsString(generateUserProfileRequest(uuid,"Nicolas", "Alvarez",
                 VALID_EMAIL, "+353", VALID_PHONE_NUMBER, "2002-05-26",
                 "Spain", "3 Novara Park", "Bray", "Wicklow",
                 "Ireland", "A98 K535"));
@@ -88,7 +105,7 @@ public class UserServiceApplicationTests {
 
     @Test
     void testReceiveUserInformationWithBlankData() throws Exception {
-        String content = MAPPER.writeValueAsString(generateUserProfileRequest("", "",
+        String content = MAPPER.writeValueAsString(generateUserProfileRequest("","", "",
                 VALID_EMAIL, "", VALID_PHONE_NUMBER, "",
                 "", "", "", "",
                 "", ""));
@@ -104,11 +121,12 @@ public class UserServiceApplicationTests {
                 .build();
     }
 
-    private UserProfile generateUserProfileRequest(String firstName, String lastName, String email,
+    private UserProfile generateUserProfileRequest(String uuid, String firstName, String lastName, String email,
                                                    String phoneCountryCode, String phoneNumber, String dateOfBirth,
                                                    String countryOfBirth, String address1, String city, String county,
                                                    String countryName, String postalCode) {
         return UserProfile.builder()
+                .uuid(uuid)
                 .firstName(firstName)
                 .lastName(lastName)
                 .email(email)

@@ -8,6 +8,7 @@ import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
+import com.fyp.userservice.model.User;
 import com.fyp.userservice.model.UserVerifiedProfile;
 import com.fyp.userservice.repository.UserRepository;
 import com.fyp.userservice.repository.UserVerifiedProfileRepository;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @Component
@@ -42,6 +44,21 @@ public class UserService {
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+    public void registerUser(RegisterUserRequest registerUserRequest) {
+        User user = User.builder()
+                .email(registerUserRequest.getEmail())
+                .password(registerUserRequest.getPassword())
+                .build();
+
+        // TODO:
+        // Verify that the user does not exist in the db...
+        // I probably only have to handle the exception.... because the db will throw it anyway
+        // email must be unique
+
+        userRepository.save(user);
+        LOGGER.info("User with uuid {}, successfully registered ", user.getId());
+    }
+
 
     public void triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
         AlethiaRequest alethiaRequest = AlethiaRequest.builder()
@@ -60,7 +77,11 @@ public class UserService {
     }
 
     public void saveUserProfileInfo(UserProfile userProfileInfo) {
+        User user = userRepository.findById(UUID.fromString(userProfileInfo.getUuid()))
+                            .orElseThrow(() -> new IllegalCallerException("test test test test"));
+
         UserVerifiedProfile userVerifiedProfile = UserVerifiedProfile.builder()
+                .user(user)
                 .firstName(userProfileInfo.getFirstName())
                 .lastName(userProfileInfo.getLastName())
                 .phoneCountryCode(userProfileInfo.getPhoneCountryCode())
@@ -77,6 +98,6 @@ public class UserService {
 
 
         userVerifiedProfileRepository.save(userVerifiedProfile);
-        LOGGER.info("User {} is saved in the db successfully", userVerifiedProfile.getId());
+        LOGGER.info("User with uuid {}, successfully verified ", userVerifiedProfile.getId());
     }
 }
