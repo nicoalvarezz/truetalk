@@ -77,6 +77,9 @@ public class UserService {
     }
 
     public void saveUserProfileInfo(UserProfile userProfileInfo) {
+        // TODO:
+        // I will come back to this exception when mcokito is used instead of testcontainers
+        // I will have to test this error message
         User user = userRepository.findById(UUID.fromString(userProfileInfo.getUuid()))
                             .orElseThrow(() -> new IllegalCallerException("test test test test"));
 
