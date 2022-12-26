@@ -35,7 +35,7 @@ public class User {
     @Column(name = "email", length = 120, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", length = 200, nullable = false)
+    @Column(name = "password", length = 45, nullable = false)
     private String password;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
