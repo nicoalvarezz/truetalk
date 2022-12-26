@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.hiveshared.api.responses.HiveResponseBody;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
+import com.fyp.userservice.model.User;
 import com.fyp.userservice.repository.UserRepository;
 import com.fyp.userservice.repository.UserVerifiedProfileRepository;
 import com.fyp.userservice.service.UserService;
@@ -78,6 +79,12 @@ public class UserServiceApplicationTests {
     void testCreateUser() {
         userService.registerUser(getRegisterUserRequest(VALID_EMAIL, VALID_PHONE_NUMBER, VALID_PASSWORD));
         Assertions.assertTrue(userRepository.findAll().size() == 1);
+
+        User user = userRepository.findAll().get(0);
+        Assertions.assertEquals(user.getEmail(), VALID_EMAIL);
+        Assertions.assertEquals(user.getPassword(), VALID_PASSWORD);
+        Assertions.assertEquals(user.isVerified(), false);
+        Assertions.assertEquals(user.isEnabled(), false);
     }
 
     @Test
