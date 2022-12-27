@@ -2,7 +2,7 @@ package com.fyp.userservice.controller;
 
 import com.fyp.hiveshared.api.responses.ResponseHandler;
 import com.fyp.userservice.dto.RegisterUserRequest;
-import com.fyp.userservice.dto.UserProfile;
+import com.fyp.userservice.dto.UserVerifiedProfile;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -45,7 +45,7 @@ public class UserController {
 
     @PostMapping("/receive-user-profile")
     @ResponseBody
-    public ResponseEntity<Object> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
+    public ResponseEntity<Object> receiveUserInformation(@Valid @RequestBody UserVerifiedProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
         return ResponseHandler.serviceResponse("User profile information received and user created", HttpStatus.CREATED, SERVICE);
     }
