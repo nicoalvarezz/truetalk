@@ -38,6 +38,12 @@ public class User {
     @Column(name = "password", length = 45, nullable = false)
     private String password;
 
+    @Column(name = "enabled", columnDefinition = "boolean default false")
+    private boolean enabled;
+
+    @Column(name = "verified", columnDefinition = "boolean default false")
+    private boolean verified;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private UserVerifiedProfile userVerifiedProfile;
