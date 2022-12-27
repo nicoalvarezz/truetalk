@@ -3,7 +3,7 @@ package com.fyp.userservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.hiveshared.api.responses.HiveResponseBody;
 import com.fyp.userservice.dto.RegisterUserRequest;
-import com.fyp.userservice.dto.UserVerifiedProfile;
+import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.model.User;
 import com.fyp.userservice.repository.UserRepository;
 import com.fyp.userservice.repository.UserVerifiedProfileRepository;
@@ -128,11 +128,11 @@ public class UserServiceApplicationTests {
                 .build();
     }
 
-    private UserVerifiedProfile generateUserProfileRequest(String uuid, String firstName, String lastName, String email,
-                                                           String phoneCountryCode, String phoneNumber, String dateOfBirth,
-                                                           String countryOfBirth, String address1, String city, String county,
-                                                           String countryName, String postalCode) {
-        return UserVerifiedProfile.builder()
+    private UserProfile generateUserProfileRequest(String uuid, String firstName, String lastName, String email,
+                                                   String phoneCountryCode, String phoneNumber, String dateOfBirth,
+                                                   String countryOfBirth, String address1, String city, String county,
+                                                   String countryName, String postalCode) {
+        return UserProfile.builder()
                 .uuid(uuid)
                 .firstName(firstName)
                 .lastName(lastName)

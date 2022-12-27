@@ -7,8 +7,9 @@ import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
-import com.fyp.userservice.dto.UserVerifiedProfile;
+import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.model.User;
+import com.fyp.userservice.model.UserVerifiedProfile;
 import com.fyp.userservice.repository.UserRepository;
 import com.fyp.userservice.repository.UserVerifiedProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -75,14 +76,14 @@ public class UserService {
         );
     }
 
-    public void saveUserProfileInfo(UserVerifiedProfile userProfileInfo) {
+    public void saveUserProfileInfo(UserProfile userProfileInfo) {
         // TODO:
         // I will come back to this exception when mcokito is used instead of testcontainers
         // I will have to test this error message
         User user = userRepository.findById(UUID.fromString(userProfileInfo.getUuid()))
                             .orElseThrow(() -> new IllegalCallerException("test test test test"));
 
-        com.fyp.userservice.model.UserVerifiedProfile userVerifiedProfile = com.fyp.userservice.model.UserVerifiedProfile.builder()
+        UserVerifiedProfile userVerifiedProfile = UserVerifiedProfile.builder()
                 .user(user)
                 .firstName(userProfileInfo.getFirstName())
                 .lastName(userProfileInfo.getLastName())

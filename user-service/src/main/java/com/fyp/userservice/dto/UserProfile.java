@@ -17,7 +17,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserVerifiedProfile {
+public class UserProfile {
 
     @NotNull
     @NotBlank
