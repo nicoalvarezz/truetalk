@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -47,4 +48,8 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private UserVerifiedProfile userVerifiedProfile;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "confirmation_token_id", referencedColumnName = "id")
+    private ConfirmationToken confirmationToken;
 }
