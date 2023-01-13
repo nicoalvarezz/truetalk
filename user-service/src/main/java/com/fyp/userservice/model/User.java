@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import java.util.UUID;
 
 @Entity
@@ -33,6 +34,7 @@ public class User {
     @Column(name = "uuid", unique = true)
     private UUID id;
 
+    @Email
     @Column(name = "email", length = 120, nullable = false, unique = true)
     private String email;
 

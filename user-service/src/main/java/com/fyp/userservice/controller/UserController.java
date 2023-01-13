@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -26,10 +27,9 @@ public class UserController {
 
     @PostMapping("/register-user")
     @ResponseBody
-    public ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUserRequest registerUserRequest) {
-        // TODO:
-        // The the email verification will start
+    public ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUserRequest registerUserRequest, HttpServletRequest request) {
         userService.registerUser(registerUserRequest);
+        userService.publishConfirmationEvent(registerUserRequest, request.getLocale(), request.getContextPath());
         return ResponseHandler.serviceResponse("User registered successfully", HttpStatus.CREATED, SERVICE);
     }
 
