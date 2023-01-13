@@ -5,7 +5,6 @@ import com.fyp.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
-import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -35,14 +34,15 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         service.createVerificationToken(user, token);
 
         String recipientAddress = user.getEmail();
-        String subject = "Registration Confirmation";
+        String subject = messages.getMessage("message.subject", null, event.getLocale());
         String confirmationUrl = event.getAppUrl() + "/registration-confirm?token=" + token;
-//        String message = messages.getMessage("message.regSucc", null, event.getLocale());
+        String messageFirstPart = messages.getMessage("message.regSucc.firstPart", null, event.getLocale());
+        String messageSecondPart = messages.getMessage("message.regSucc.secondPart", null, event.getLocale());
 
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText("Some meessage" + "\r\n" + "http://localhost:8080" + confirmationUrl);
+        email.setText(messageFirstPart + "\r\n" + "http://localhost:8080" + confirmationUrl + messageSecondPart);
         mailSender.send(email);
     }
 }
