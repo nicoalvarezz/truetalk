@@ -8,31 +8,41 @@ import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
+import com.fyp.userservice.model.ConfirmationToken;
 import com.fyp.userservice.model.User;
 import com.fyp.userservice.model.UserVerifiedProfile;
+import com.fyp.userservice.repository.ConfirmationTokenRepository;
 import com.fyp.userservice.repository.UserRepository;
 import com.fyp.userservice.repository.UserVerifiedProfileRepository;
+import com.fyp.userservice.eventListener.OnRegistrationCompleteEvent;
 import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
 @Component
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements ConfirmUser {
 
     @Autowired
     private AlethiaProperties alethiaProperties;
 
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
+
+
     private final UserRepository userRepository;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
     private final UserVerifiedProfileRepository userVerifiedProfileRepository;
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -45,15 +55,11 @@ public class UserService {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public void registerUser(RegisterUserRequest registerUserRequest) {
+        // I am not missing the phone number
         User user = User.builder()
                 .email(registerUserRequest.getEmail())
                 .password(registerUserRequest.getPassword())
                 .build();
-
-        // TODO:
-        // Verify that the user does not exist in the db...
-        // I probably only have to handle the exception.... because the db will throw it anyway
-        // email must be unique
 
         userRepository.save(user);
         LOGGER.info("User with uuid {}, successfully registered ", user.getId());
@@ -102,5 +108,28 @@ public class UserService {
 
         userVerifiedProfileRepository.save(userVerifiedProfile);
         LOGGER.info("User with uuid {}, successfully verified ", userVerifiedProfile.getId());
+    }
+
+    public void publishConfirmationEvent(RegisterUserRequest userRequest, Locale locale, String appUrl) {
+        User user = userRepository.findByEmail(userRequest.getEmail());
+        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, locale, appUrl));
+    }
+
+    @Override
+    public User getUserBycConfirmationToken(String confirmationToken) {
+        return confirmationTokenRepository.findByToken(confirmationToken).getUser();
+    }
+
+    @Override
+    public ConfirmationToken getVerificationToken(String confirmationToken) {
+        return confirmationTokenRepository.findByToken(confirmationToken);
+    }
+
+    @Override
+    public void createVerificationToken(User user, String token) {
+        confirmationTokenRepository.save(ConfirmationToken.builder()
+                                            .token(token)
+                                            .user(user)
+                                            .build());
     }
 }

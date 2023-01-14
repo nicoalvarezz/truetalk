@@ -27,6 +27,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+// some test will be failing because given that primary key is repeated ---> Databases need to be cleaned before running the following the test
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers

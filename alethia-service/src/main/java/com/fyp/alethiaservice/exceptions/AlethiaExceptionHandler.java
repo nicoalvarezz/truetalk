@@ -1,6 +1,6 @@
 package com.fyp.alethiaservice.exceptions;
 
-import com.fyp.hiveshared.api.responses.excpetion.ExceptionHandlerResponses;
+import com.fyp.hiveshared.api.responses.ResponseHandler;
 import com.fyp.hiveshared.api.responses.excpetion.ServiceUnavailableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +19,11 @@ public class AlethiaExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
-        return ExceptionHandlerResponses.exceptionHandlerResponse(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
+        return ResponseHandler.responseBody(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
     }
 
     @ExceptionHandler(ServiceUnavailableException.class)
     public ResponseEntity<?> handleServiceUnavailableException(ServiceUnavailableException ex, WebRequest request) {
-        return ExceptionHandlerResponses.exceptionHandlerResponse(ex.getMessage(), HttpStatus.SERVICE_UNAVAILABLE, SERVICE);
+        return ResponseHandler.responseBody(ex.getMessage(), HttpStatus.SERVICE_UNAVAILABLE, SERVICE);
     }
 }

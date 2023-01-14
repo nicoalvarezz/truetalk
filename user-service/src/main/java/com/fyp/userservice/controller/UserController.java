@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -26,11 +27,10 @@ public class UserController {
 
     @PostMapping("/register-user")
     @ResponseBody
-    public ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUserRequest registerUserRequest) {
-        // TODO:
-        // The the email verification will start
+    public ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUserRequest registerUserRequest, HttpServletRequest request) {
         userService.registerUser(registerUserRequest);
-        return ResponseHandler.serviceResponse("User registered successfully", HttpStatus.CREATED, SERVICE);
+        userService.publishConfirmationEvent(registerUserRequest, request.getLocale(), request.getContextPath());
+        return ResponseHandler.responseBody("User registered successfully", HttpStatus.CREATED, SERVICE);
     }
 
     // TODO:
@@ -40,13 +40,13 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<Object> triggerAlethiaVerification(@Valid @RequestBody RegisterUserRequest registerUserRequest) throws IOException {
         userService.triggerAlethiaVerification(registerUserRequest);
-        return ResponseHandler.serviceResponse("Verification triggered in alethia", HttpStatus.OK, SERVICE);
+        return ResponseHandler.responseBody("Verification triggered in alethia", HttpStatus.OK, SERVICE);
     }
 
     @PostMapping("/receive-user-profile")
     @ResponseBody
     public ResponseEntity<Object> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
-        return ResponseHandler.serviceResponse("User profile information received and user created", HttpStatus.CREATED, SERVICE);
+        return ResponseHandler.responseBody("User profile information received and user created", HttpStatus.CREATED, SERVICE);
     }
 }
