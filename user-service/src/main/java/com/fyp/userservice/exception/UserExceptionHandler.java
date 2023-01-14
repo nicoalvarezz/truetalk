@@ -14,7 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 public class UserExceptionHandler {
 
     private static final String SERVICE = "user-service";
-    private static final String METHOD_ARGUMENT_ERROR = "Validation failed for some of the arguments. Make sure that all arguments are correct";
+    private static final String METHOD_ARGUMENT_ERROR = "Validation failed for some of the arguments. Make sure that all arguments are correct.";
     private static final String CONSTRAINT_VIOLATION_ERROR = "Unique constraint violated.";
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
