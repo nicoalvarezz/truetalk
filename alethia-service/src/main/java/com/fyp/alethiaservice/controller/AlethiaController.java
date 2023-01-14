@@ -28,13 +28,13 @@ public class AlethiaController {
     @PostMapping("/trigger-verification")
     public ResponseEntity<Object> triggerVerification(@Valid @RequestBody UserRequest userRequest) throws IOException, ServiceUnavailableException {
         alethiaService.triggerVerification(userRequest);
-        return ResponseHandler.serviceResponse("Verification link sent", HttpStatus.OK, SERVICE);
+        return ResponseHandler.responseBody("Verification link sent", HttpStatus.OK, SERVICE);
     }
 
     @PostMapping("/webhook-receiver")
     public ResponseEntity<Object> webhookReceiver(@Valid @RequestBody IdpalWebhookRequest idPalWebhookRequest) throws IOException {
         UserProfileInfo userPersonalInfo = alethiaService.retrieveUserPersonalInfo(idPalWebhookRequest.getSubmissionId());
         alethiaService.sendUserProfileToUserService(userPersonalInfo);
-        return ResponseHandler.serviceResponse("Webhook received", HttpStatus.OK, SERVICE);
+        return ResponseHandler.responseBody("Webhook received", HttpStatus.OK, SERVICE);
     }
 }

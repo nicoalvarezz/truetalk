@@ -30,7 +30,7 @@ public class UserController {
     public ResponseEntity<Object> registerUser(@Valid @RequestBody RegisterUserRequest registerUserRequest, HttpServletRequest request) {
         userService.registerUser(registerUserRequest);
         userService.publishConfirmationEvent(registerUserRequest, request.getLocale(), request.getContextPath());
-        return ResponseHandler.serviceResponse("User registered successfully", HttpStatus.CREATED, SERVICE);
+        return ResponseHandler.responseBody("User registered successfully", HttpStatus.CREATED, SERVICE);
     }
 
     // TODO:
@@ -40,13 +40,13 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<Object> triggerAlethiaVerification(@Valid @RequestBody RegisterUserRequest registerUserRequest) throws IOException {
         userService.triggerAlethiaVerification(registerUserRequest);
-        return ResponseHandler.serviceResponse("Verification triggered in alethia", HttpStatus.OK, SERVICE);
+        return ResponseHandler.responseBody("Verification triggered in alethia", HttpStatus.OK, SERVICE);
     }
 
     @PostMapping("/receive-user-profile")
     @ResponseBody
     public ResponseEntity<Object> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
-        return ResponseHandler.serviceResponse("User profile information received and user created", HttpStatus.CREATED, SERVICE);
+        return ResponseHandler.responseBody("User profile information received and user created", HttpStatus.CREATED, SERVICE);
     }
 }
