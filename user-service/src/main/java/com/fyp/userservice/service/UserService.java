@@ -55,15 +55,11 @@ public class UserService implements ConfirmUser {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public void registerUser(RegisterUserRequest registerUserRequest) {
+        // I am not missing the phone number
         User user = User.builder()
                 .email(registerUserRequest.getEmail())
                 .password(registerUserRequest.getPassword())
                 .build();
-
-        // TODO:
-        // Verify that the user does not exist in the db...
-        // I probably only have to handle the exception.... because the db will throw it anyway
-        // email must be unique
 
         userRepository.save(user);
         LOGGER.info("User with uuid {}, successfully registered ", user.getId());
