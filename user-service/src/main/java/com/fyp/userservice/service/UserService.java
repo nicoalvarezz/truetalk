@@ -65,6 +65,19 @@ public class UserService implements ConfirmUser {
         LOGGER.info("User with uuid {}, successfully registered ", user.getId());
     }
 
+    public void confirmUser(String token) {
+        ConfirmationToken confirmationToken = getVerificationToken(token);
+
+        // TODO:
+        // Verify token is not null, and throw corresponding error --> Create a method for so
+
+        User user = confirmationToken.getUser();
+        // TODO:
+        // Check that the token has not expired --> Another private method for so
+
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
 
     public void triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
         AlethiaRequest alethiaRequest = AlethiaRequest.builder()

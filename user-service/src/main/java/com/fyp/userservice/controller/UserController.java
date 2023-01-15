@@ -3,13 +3,16 @@ package com.fyp.userservice.controller;
 import com.fyp.hiveshared.api.responses.ResponseHandler;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
+import com.fyp.userservice.model.ConfirmationToken;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +34,16 @@ public class UserController {
         userService.registerUser(registerUserRequest);
         userService.publishConfirmationEvent(registerUserRequest, request.getLocale(), request.getContextPath());
         return ResponseHandler.responseBody("User registered successfully", HttpStatus.CREATED, SERVICE);
+    }
+
+    @GetMapping("/registration-confirm")
+    public ResponseEntity<Object> registrationConfirm(@Valid @RequestParam("token") String token) {
+        // TODO:
+        // confirm user
+
+        // Should this in the future sent to a page or something... I'll have to think about it later
+        userService.confirmUser(token);
+        return ResponseHandler.responseBody("User confirmed successfully", HttpStatus.OK, SERVICE);
     }
 
     // TODO:
