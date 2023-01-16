@@ -1,9 +1,9 @@
 package com.fyp.userservice.controller;
 
 import com.fyp.hiveshared.api.responses.ResponseHandler;
+import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
-import com.fyp.userservice.model.ConfirmationToken;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 @RestController
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/registration-confirm")
-    public ResponseEntity<Object> registrationConfirm(@Valid @RequestParam("token") String token) {
+    public ResponseEntity<Object> registrationConfirm(@RequestParam(value = "token", required = false) String token) throws UnauthorizedException {
         // TODO:
         // confirm user
 

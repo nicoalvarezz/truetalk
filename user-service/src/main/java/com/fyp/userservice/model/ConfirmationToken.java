@@ -14,8 +14,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "confirmation_token")
@@ -38,9 +39,11 @@ public class ConfirmationToken {
     @JoinColumn(nullable = false, name = "uuid")
     private User user;
 
-    @Column(name = "expiry_date")
-    private Date expiryDate;
+    @Column(name = "expiry_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime expiryDate;
 
-    // TODO:
-    // expiration method of the confirmation token
+    @PrePersist
+    void onCreate() {
+        this.expiryDate = LocalDateTime.now().plusHours(24);
+    }
 }

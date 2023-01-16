@@ -1,6 +1,7 @@
 package com.fyp.userservice.exception;
 
 import com.fyp.hiveshared.api.responses.ResponseHandler;
+import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +26,10 @@ public class UserExceptionHandler {
     @ExceptionHandler({ConstraintViolationException.class})
     protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
         return ResponseHandler.responseBody(CONSTRAINT_VIOLATION_ERROR, HttpStatus.CONFLICT, SERVICE);
+    }
+
+    @ExceptionHandler({UnauthorizedException.class})
+    protected ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException ex, WebRequest request) {
+        return ResponseHandler.responseBody(ex.getMessage(), ex.getStatus(), SERVICE);
     }
 }
