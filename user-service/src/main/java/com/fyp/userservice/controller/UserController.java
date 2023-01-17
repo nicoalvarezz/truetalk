@@ -1,5 +1,6 @@
 package com.fyp.userservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.hiveshared.api.responses.ResponseHandler;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.dto.RegisterUserRequest;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 @RestController
@@ -38,8 +38,9 @@ public class UserController {
     }
 
     @GetMapping("/registration-confirm")
-    public ResponseEntity<Object> registrationConfirm(@RequestParam(value = "token", required = false) String token) throws UnauthorizedException {
+    public ResponseEntity<Object> registrationConfirm(@RequestParam(value = "token", required = false) String token) throws UnauthorizedException, JsonProcessingException {
         userService.confirmUser(token);
+        userService.triggerAlethiaVerification(token);
         return ResponseHandler.responseBody("User confirmed successfully", HttpStatus.OK, SERVICE);
     }
 

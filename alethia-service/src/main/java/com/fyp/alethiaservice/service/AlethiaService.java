@@ -47,7 +47,7 @@ public class AlethiaService {
 
 
     public void triggerVerification(UserRequest registerUserData) throws IOException, ServiceUnavailableException {
-        renewIdpalAccessToken();
+//        renewIdpalAccessToken();
 
         IdpalRequest idPalRequest = IdpalRequest.builder()
                 .clientKey(idPalProperties.getClientKey())
@@ -76,7 +76,7 @@ public class AlethiaService {
     }
 
     public UserProfileInfo retrieveUserPersonalInfo(int submissionId) throws IOException {
-        renewIdpalAccessToken();
+//        renewIdpalAccessToken();
 
         IdpalRequest idPalRequest = IdpalRequest.builder()
                 .clientKey(idPalProperties.getClientKey())
@@ -95,7 +95,6 @@ public class AlethiaService {
         );
 
         UserProfileInfo userProfileInfo = MAPPER.readValue(response.body().string(), UserProfileInfo.class);
-
         return userProfileInfo;
     }
 

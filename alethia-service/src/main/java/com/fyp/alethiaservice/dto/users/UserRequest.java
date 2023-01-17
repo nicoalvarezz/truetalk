@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -21,8 +22,7 @@ public class UserRequest {
     @NotBlank
     private String email;
 
-    @NotNull
-    @NotBlank
+    @Nullable
     @JsonProperty("phone_number")
     private String phoneNumber;
 }
