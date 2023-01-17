@@ -39,10 +39,6 @@ public class UserController {
 
     @GetMapping("/registration-confirm")
     public ResponseEntity<Object> registrationConfirm(@RequestParam(value = "token", required = false) String token) throws UnauthorizedException {
-        // TODO:
-        // confirm user
-
-        // Should this in the future sent to a page or something... I'll have to think about it later
         userService.confirmUser(token);
         return ResponseHandler.responseBody("User confirmed successfully", HttpStatus.OK, SERVICE);
     }
