@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
+import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -65,6 +67,22 @@ public class UserService implements ConfirmUser {
         LOGGER.info("User with uuid {}, successfully registered ", user.getId());
     }
 
+    public void confirmUser(String token) throws UnauthorizedException {
+        if (token.isEmpty()) {
+            throw new UnauthorizedException("Confirmation token cannot be null");
+        }
+
+        ConfirmationToken confirmationToken = getVerificationToken(token);
+        User user = confirmationToken.getUser();
+
+        // if now() is greater than expiry date the comparator value will be positive
+        if (LocalDateTime.now().compareTo(confirmationToken.getExpiryDate()) > 0) {
+            throw new UnauthorizedException("Confirmation token has expired");
+        }
+
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
 
     public void triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
         AlethiaRequest alethiaRequest = AlethiaRequest.builder()

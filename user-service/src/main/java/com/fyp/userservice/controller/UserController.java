@@ -1,20 +1,24 @@
 package com.fyp.userservice.controller;
 
 import com.fyp.hiveshared.api.responses.ResponseHandler;
+import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 @RestController
@@ -31,6 +35,12 @@ public class UserController {
         userService.registerUser(registerUserRequest);
         userService.publishConfirmationEvent(registerUserRequest, request.getLocale(), request.getContextPath());
         return ResponseHandler.responseBody("User registered successfully", HttpStatus.CREATED, SERVICE);
+    }
+
+    @GetMapping("/registration-confirm")
+    public ResponseEntity<Object> registrationConfirm(@RequestParam(value = "token", required = false) String token) throws UnauthorizedException {
+        userService.confirmUser(token);
+        return ResponseHandler.responseBody("User confirmed successfully", HttpStatus.OK, SERVICE);
     }
 
     // TODO:

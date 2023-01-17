@@ -8,15 +8,18 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "enabled_token")
+@Table(name = "confirmation_token")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,10 +35,15 @@ public class ConfirmationToken {
     @Column(name = "token")
     private String token;
 
-    @OneToOne(mappedBy = "confirmationToken")
+    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "uuid")
     private User user;
 
-    @Column(name = "expiry_date")
-    private Date expiryDate;
+    @Column(name = "expiry_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime expiryDate;
 
+    @PrePersist
+    void onCreate() {
+        this.expiryDate = LocalDateTime.now().plusHours(24);
+    }
 }

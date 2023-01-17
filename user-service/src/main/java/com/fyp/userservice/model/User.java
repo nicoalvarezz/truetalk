@@ -50,8 +50,4 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private UserVerifiedProfile userVerifiedProfile;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "confirmation_token_id", referencedColumnName = "id")
-    private ConfirmationToken confirmationToken;
 }
