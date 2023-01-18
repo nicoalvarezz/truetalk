@@ -116,9 +116,6 @@ public class UserService implements ConfirmUser {
         User user = userRepository.findByEmail(userProfileInfo.getEmail());
         user.setVerified(true);
 
-        // TODO:
-        // Possible implementation
-        // UserVerifiedProfile userVerifiedProfile = MAPPER.convertValue(userProfileInfo, UserVerifiedProfile.class);
         UserVerifiedProfile userVerifiedProfile = UserVerifiedProfile.builder()
                 .user(user)
                 .firstName(userProfileInfo.getFirstName())
