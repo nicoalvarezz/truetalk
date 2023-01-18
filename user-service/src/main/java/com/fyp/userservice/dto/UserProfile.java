@@ -21,10 +21,6 @@ public class UserProfile {
 
     @NotNull
     @NotBlank
-    private String uuid;
-
-    @NotNull
-    @NotBlank
     @JsonProperty("firstname")
     private String firstName;
 

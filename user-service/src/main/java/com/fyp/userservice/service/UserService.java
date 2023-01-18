@@ -1,6 +1,7 @@
 package com.fyp.userservice.service;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
@@ -29,7 +30,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Locale;
-import java.util.UUID;
 
 @Service
 @Component
@@ -84,12 +84,22 @@ public class UserService implements ConfirmUser {
         userRepository.save(user);
     }
 
-    public void triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
-        AlethiaRequest alethiaRequest = AlethiaRequest.builder()
-                .email(registerUserRequest.getEmail())
-                .phoneNumber(registerUserRequest.getPhoneNumber())
-                .build();
+    public void triggerAlethiaVerification(String token) throws JsonProcessingException {
+        User user = getVerificationToken(token).getUser();
+        AlethiaRequest alethiaRequest = MAPPER.convertValue(user, AlethiaRequest.class);
+        ApiHelpers.makeApiRequest(
+                ApiHelpers.generateRequest(
+                        POST_METHOD,
+                        alethiaProperties.getAlethiaTriggerVerificationEndpoint(),
+                        RequestBody.create(MAPPER.writeValueAsString(alethiaRequest), JSON),
+                        EMPTY_ACCESS_TOKEN
+                )
+        );
 
+    }
+
+    public void triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
+        AlethiaRequest alethiaRequest = MAPPER.convertValue(registerUserRequest, AlethiaRequest.class);
         ApiHelpers.makeApiRequest(
                 ApiHelpers.generateRequest(
                         POST_METHOD,
@@ -102,10 +112,9 @@ public class UserService implements ConfirmUser {
 
     public void saveUserProfileInfo(UserProfile userProfileInfo) {
         // TODO:
-        // I will come back to this exception when mcokito is used instead of testcontainers
-        // I will have to test this error message
-        User user = userRepository.findById(UUID.fromString(userProfileInfo.getUuid()))
-                            .orElseThrow(() -> new IllegalCallerException("test test test test"));
+        // Make sure that the if the user does not exist or already has been verified throws an error.
+        User user = userRepository.findByEmail(userProfileInfo.getEmail());
+        user.setVerified(true);
 
         UserVerifiedProfile userVerifiedProfile = UserVerifiedProfile.builder()
                 .user(user)
@@ -123,9 +132,8 @@ public class UserService implements ConfirmUser {
                 .postalCode(userProfileInfo.getPostalCode())
                 .build();
 
-
         userVerifiedProfileRepository.save(userVerifiedProfile);
-        LOGGER.info("User with uuid {}, successfully verified ", userVerifiedProfile.getId());
+        LOGGER.info("User with uuid {}, successfully verified ", userVerifiedProfile.getUuid());
     }
 
     public void publishConfirmationEvent(RegisterUserRequest userRequest, Locale locale, String appUrl) {

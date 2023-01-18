@@ -26,7 +26,7 @@ public class UserVerifiedProfile {
 
     @Id
     @Column(name = "uuid")
-    private UUID id;
+    private UUID uuid;
 
     @OneToOne
     @MapsId
