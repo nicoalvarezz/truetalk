@@ -44,8 +44,7 @@ public class UserProfile {
     @JsonProperty("phone_country_code")
     private String phoneCountryCode;
 
-    @NotNull
-    @NotBlank
+    @Nullable
     @Pattern(regexp = "^[+]*[(]?[0-9]{1,4}[)]?[-\\s\\./0-9]*$")
     @JsonProperty("phone")
     private String phoneNumber;
