@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 @Data
 @Builder
@@ -26,6 +27,7 @@ public class UserProfileInfo {
     @JsonProperty("phone_country_code")
     private String phoneCountryCode;
 
+    @Nullable
     @JsonProperty("phone")
     private String phoneNumber;
 
