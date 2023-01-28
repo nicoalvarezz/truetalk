@@ -9,3 +9,11 @@ services:
     restart: unless-stopped
     env_file:
       - user-service/user-service-db-credentials.env
+
+  post-service-db:
+    container_name: post_service_db
+    image: mongo:latest
+    environment:
+      - post-servqice/post-service-db-credentials.env
+    ports:
+      - '27017:27017'
