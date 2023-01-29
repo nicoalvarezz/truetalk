@@ -1,6 +1,8 @@
 package com.fyp.postservice.controller;
 
 import com.fyp.hiveshared.api.responses.ResponseHandler;
+import com.fyp.postservice.model.Post;
+import com.fyp.postservice.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
