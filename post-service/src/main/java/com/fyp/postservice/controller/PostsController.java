@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PostsController {
 
-    private final PostRepository postRepository;
-
     private static String SERVICE = "post-service";
 
     @GetMapping("/test")
