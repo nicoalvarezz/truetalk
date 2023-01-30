@@ -23,7 +23,7 @@ public class PostsController {
 
     @PostMapping("/save-post")
     public ResponseEntity<Object> savePost(@Valid @RequestBody UserPost userPost) {
-        postService.processAndSavePost(userPost);
+        postService.savePost(userPost);
         return ResponseHandler.responseBody("Post saved successfully", HttpStatus.CREATED, SERVICE);
     }
 }

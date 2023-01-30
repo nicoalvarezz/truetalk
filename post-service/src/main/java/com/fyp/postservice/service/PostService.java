@@ -18,7 +18,10 @@ public class PostService {
 
     private final PostRepository postRepository;
 
-    public void processAndSavePost(UserPost userPost) {
+    public void savePost(UserPost userPost) {
+
+        // TODO:
+        // Verify that the user exists!
         Post post = Post.builder()
                 .cratedAt(String.valueOf(Instant.now().getEpochSecond()))
                 .text(verifyUuid(userPost.getText()))
