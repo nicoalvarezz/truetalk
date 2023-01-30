@@ -1,14 +1,17 @@
 package com.fyp.postservice.controller;
 
 import com.fyp.hiveshared.api.responses.ResponseHandler;
-import com.fyp.postservice.model.Post;
-import com.fyp.postservice.repository.PostRepository;
+import com.fyp.postservice.dto.UserPost;
+import com.fyp.postservice.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/posts/")
@@ -16,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostsController {
 
     private static String SERVICE = "post-service";
+    private final PostService postService;
 
-    @GetMapping("/test")
-    public ResponseEntity<Object> test() {
-        return ResponseHandler.responseBody("Hello from post-service", HttpStatus.OK, SERVICE);
+    @PostMapping("/save-post")
+    public ResponseEntity<Object> savePost(@Valid @RequestBody UserPost userPost) {
+        postService.savePost(userPost);
+        return ResponseHandler.responseBody("Post saved successfully", HttpStatus.CREATED, SERVICE);
     }
 }
