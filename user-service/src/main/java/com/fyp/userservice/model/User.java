@@ -12,11 +12,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -50,4 +51,7 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private UserVerifiedProfile userVerifiedProfile;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Followers> followers;
 }

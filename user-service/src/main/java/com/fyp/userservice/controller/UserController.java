@@ -60,4 +60,11 @@ public class UserController {
         userService.saveUserProfileInfo(userProfileInfo);
         return ResponseHandler.responseBody("User profile information received and user created", HttpStatus.CREATED, SERVICE);
     }
+
+    @PostMapping("simple-user-followers-test")
+    public ResponseEntity<Object> simpleUser(@RequestBody RegisterUserRequest registerUserRequest) {
+        userService.registerUser(registerUserRequest);
+        userService.testFollowers(registerUserRequest.getEmail());
+        return ResponseHandler.responseBody("Something something something", HttpStatus.CREATED, SERVICE);
+    }
 }

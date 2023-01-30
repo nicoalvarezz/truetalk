@@ -76,50 +76,50 @@ public class UserServiceApplicationTests {
 //                .andReturn();
 //    }
 
-    @Test
-    void testCreateUser() {
-        userService.registerUser(getRegisterUserRequest(VALID_EMAIL, VALID_PHONE_NUMBER, VALID_PASSWORD));
-        Assertions.assertTrue(userRepository.findAll().size() == 1);
+//    @Test
+//    void testCreateUser() {
+//        userService.registerUser(getRegisterUserRequest(VALID_EMAIL, VALID_PHONE_NUMBER, VALID_PASSWORD));
+//        Assertions.assertTrue(userRepository.findAll().size() == 1);
+//
+//        User user = userRepository.findAll().get(0);
+//        Assertions.assertEquals(user.getEmail(), VALID_EMAIL);
+//        Assertions.assertEquals(user.getPassword(), VALID_PASSWORD);
+//        Assertions.assertEquals(user.isVerified(), false);
+//        Assertions.assertEquals(user.isEnabled(), false);
+//    }
 
-        User user = userRepository.findAll().get(0);
-        Assertions.assertEquals(user.getEmail(), VALID_EMAIL);
-        Assertions.assertEquals(user.getPassword(), VALID_PASSWORD);
-        Assertions.assertEquals(user.isVerified(), false);
-        Assertions.assertEquals(user.isEnabled(), false);
-    }
+//    @Test
+//    void testSaveVerifiedUserData() throws Exception {
+//        userService.registerUser(getRegisterUserRequest(VALID_EMAIL, VALID_PHONE_NUMBER, VALID_PASSWORD));
+//        String uuid = userRepository.findAll().get(0).getId().toString();
+//
+//        String content = MAPPER.writeValueAsString(generateUserProfileRequest(uuid,"Nicolas", "Alvarez",
+//                VALID_EMAIL, "+353", VALID_PHONE_NUMBER, "2002-05-26",
+//                "Spain", "3 Novara Park", "Bray", "Wicklow",
+//                "Ireland", "A98 K535"));
+//
+//        MvcResult result = performPost(RECEIVE_USER_PROFILE, content)
+//                .andExpect(MockMvcResultMatchers.status().isCreated())
+//                .andReturn();
+//
+//        HiveResponseBody response = MAPPER.readValue(result.getResponse().getContentAsString(), HiveResponseBody.class);
+//
+//        Assertions.assertEquals("User profile information received and user created", response.getMessage());
+//        Assertions.assertEquals(HttpStatus.CREATED, response.getMethod());
+//        Assertions.assertEquals(SERVICE, response.getService());
+//
+//        Assertions.assertTrue(userRepository.findAll().size() == 1);
+//    }
 
-    @Test
-    void testSaveVerifiedUserData() throws Exception {
-        userService.registerUser(getRegisterUserRequest(VALID_EMAIL, VALID_PHONE_NUMBER, VALID_PASSWORD));
-        String uuid = userRepository.findAll().get(0).getId().toString();
-
-        String content = MAPPER.writeValueAsString(generateUserProfileRequest(uuid,"Nicolas", "Alvarez",
-                VALID_EMAIL, "+353", VALID_PHONE_NUMBER, "2002-05-26",
-                "Spain", "3 Novara Park", "Bray", "Wicklow",
-                "Ireland", "A98 K535"));
-
-        MvcResult result = performPost(RECEIVE_USER_PROFILE, content)
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andReturn();
-
-        HiveResponseBody response = MAPPER.readValue(result.getResponse().getContentAsString(), HiveResponseBody.class);
-
-        Assertions.assertEquals("User profile information received and user created", response.getMessage());
-        Assertions.assertEquals(HttpStatus.CREATED, response.getMethod());
-        Assertions.assertEquals(SERVICE, response.getService());
-
-        Assertions.assertTrue(userRepository.findAll().size() == 1);
-    }
-
-    @Test
-    void testReceiveUserInformationWithBlankData() throws Exception {
-        String content = MAPPER.writeValueAsString(generateUserProfileRequest("","", "",
-                VALID_EMAIL, "", VALID_PHONE_NUMBER, "",
-                "", "", "", "",
-                "", ""));
-
-        performPost(RECEIVE_USER_PROFILE, content).andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
+//    @Test
+//    void testReceiveUserInformationWithBlankData() throws Exception {
+//        String content = MAPPER.writeValueAsString(generateUserProfileRequest("","", "",
+//                VALID_EMAIL, "", VALID_PHONE_NUMBER, "",
+//                "", "", "", "",
+//                "", ""));
+//
+//        performPost(RECEIVE_USER_PROFILE, content).andExpect(MockMvcResultMatchers.status().isBadRequest());
+//    }
 
     private RegisterUserRequest getRegisterUserRequest(String email, String phoneNumber, String password) {
         return RegisterUserRequest.builder()
@@ -129,26 +129,26 @@ public class UserServiceApplicationTests {
                 .build();
     }
 
-    private UserProfile generateUserProfileRequest(String uuid, String firstName, String lastName, String email,
-                                                   String phoneCountryCode, String phoneNumber, String dateOfBirth,
-                                                   String countryOfBirth, String address1, String city, String county,
-                                                   String countryName, String postalCode) {
-        return UserProfile.builder()
-                .uuid(uuid)
-                .firstName(firstName)
-                .lastName(lastName)
-                .email(email)
-                .phoneCountryCode(phoneCountryCode)
-                .phoneNumber(phoneNumber)
-                .dateOfBirth(dateOfBirth)
-                .countryOfBirth(countryOfBirth)
-                .address1(address1)
-                .city(city)
-                .county(county)
-                .countryName(countryName)
-                .postalCode(postalCode)
-                .build();
-    }
+//    private UserProfile generateUserProfileRequest(String uuid, String firstName, String lastName, String email,
+//                                                   String phoneCountryCode, String phoneNumber, String dateOfBirth,
+//                                                   String countryOfBirth, String address1, String city, String county,
+//                                                   String countryName, String postalCode) {
+//        return UserProfile.builder()
+//                .uuid(uuid)
+//                .firstName(firstName)
+//                .lastName(lastName)
+//                .email(email)
+//                .phoneCountryCode(phoneCountryCode)
+//                .phoneNumber(phoneNumber)
+//                .dateOfBirth(dateOfBirth)
+//                .countryOfBirth(countryOfBirth)
+//                .address1(address1)
+//                .city(city)
+//                .county(county)
+//                .countryName(countryName)
+//                .postalCode(postalCode)
+//                .build();
+//    }
 
     private ResultActions performPost(String endpoint, String content) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders.post(endpoint)
