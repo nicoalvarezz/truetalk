@@ -53,5 +53,5 @@ public class User {
     private UserVerifiedProfile userVerifiedProfile;
 
     @OneToMany(mappedBy = "user")
-    private Set<Followers> followers;
+    private Set<Follower> followers;
 }

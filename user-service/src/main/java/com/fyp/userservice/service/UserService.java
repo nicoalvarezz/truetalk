@@ -11,11 +11,9 @@ import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.model.ConfirmationToken;
-import com.fyp.userservice.model.Followers;
 import com.fyp.userservice.model.User;
 import com.fyp.userservice.model.UserVerifiedProfile;
 import com.fyp.userservice.repository.ConfirmationTokenRepository;
-import com.fyp.userservice.repository.FollowersRepository;
 import com.fyp.userservice.repository.UserRepository;
 import com.fyp.userservice.repository.UserVerifiedProfileRepository;
 import com.fyp.userservice.eventListener.OnRegistrationCompleteEvent;
@@ -32,8 +30,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 @Component
@@ -50,7 +46,6 @@ public class UserService implements ConfirmUser {
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final UserVerifiedProfileRepository userVerifiedProfileRepository;
-    private final FollowersRepository followersRepository;
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
@@ -162,16 +157,5 @@ public class UserService implements ConfirmUser {
                                             .token(token)
                                             .user(user)
                                             .build());
-    }
-
-    public void testFollowers(String email) {
-        User user = userRepository.findByEmail(email);
-        System.out.println("Helloooooooo");
-        followersRepository.save(new Followers(user));
-        Set<Followers> some = followersRepository.findByUser(user);
-
-        for (Followers x : some) {
-            System.out.println("YOOOOOO: " + x.getUser().getEmail());
-        }
     }
 }
