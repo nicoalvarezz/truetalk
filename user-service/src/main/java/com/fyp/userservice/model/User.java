@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,9 +37,11 @@ public class User {
     private UUID id;
 
     @Email
+    @NotBlank
     @Column(name = "email", length = 120, nullable = false, unique = true)
     private String email;
 
+    @NotBlank
     @Column(name = "password", length = 45, nullable = false)
     private String password;
 
