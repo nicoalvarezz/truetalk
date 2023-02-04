@@ -1,7 +1,8 @@
 package com.fyp.userservice;
 
-import com.fyp.userservice.model.Follower;
+import com.fyp.userservice.model.Followee;
 import com.fyp.userservice.model.User;
+import com.fyp.userservice.repository.FolloweeeRepository;
 import com.fyp.userservice.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,6 @@ import org.springframework.transaction.TransactionSystemException;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
-import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class UserEntityTests {
+public class EntityTests {
 
     @Mock
     private User validUser;
@@ -32,14 +32,14 @@ public class UserEntityTests {
     @Mock
     private User invalidUser;
 
-    @Mock
-    private Set<Follower> followers;
-
     @Container
     static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:latest");
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FolloweeeRepository followeeeRepository;
 
     private static int MAX_PASSWORD_LENGTH = 46;
 
@@ -56,7 +56,6 @@ public class UserEntityTests {
         when(validUser.getId()).thenReturn(uuid);
         when(validUser.getEmail()).thenReturn(EMAIL);
         when(validUser.getPassword()).thenReturn(PASSWORD);
-        when(validUser.getFollowers()).thenReturn(followers);
         when(invalidUser.getEmail()).thenReturn(INVALID_EMAIL);
         when(invalidUser.getPassword()).thenReturn(INVALID_PASSWORD);
     }
@@ -71,7 +70,6 @@ public class UserEntityTests {
         assertEquals(PASSWORD, validUser.getPassword());
         assertFalse(validUser.isEnabled());
         assertFalse(validUser.isVerified());
-        assertEquals(followers, validUser.getFollowers());
     }
 
     @Test
@@ -191,5 +189,84 @@ public class UserEntityTests {
         assertEquals(tempUser.getPassword(), validUser.getPassword());
         assertEquals(tempUser.isEnabled(), validUser.isEnabled());
         assertEquals(tempUser.isVerified(), validUser.isVerified());
+    }
+
+    @Test
+    void testValidFollowees() {
+        userRepository.save(User.builder()
+                .email(validUser.getEmail())
+                .password(validUser.getPassword())
+                .build());
+
+        userRepository.save(User.builder()
+                .email("tempUser@gmail.com")
+                .password("tempuserpasswrod")
+                .build());
+
+        assertTrue(userRepository.findAll().size() == 2);
+
+        User follower = userRepository.findByEmail(validUser.getEmail());
+        User followee = userRepository.findByEmail("tempUser@gmail.com");
+
+        followeeeRepository.save(new Followee(follower.getId(), followee.getId()));
+
+        assertEquals(followeeeRepository.findByFollowerId(follower.getId()).get(0).getFolloweeId(), followee.getId());
+        assertTrue(followeeeRepository.findByFollowerId(follower.getId()).size() == 1);
+    }
+
+    @Test
+    void testInvalidFollowees() {
+        userRepository.save(User.builder()
+                .email(validUser.getEmail())
+                .password(validUser.getPassword())
+                .build());
+
+        userRepository.save(User.builder()
+                .email("tempUser@gmail.com")
+                .password("tempuserpasswrod")
+                .build());
+
+        assertTrue(userRepository.findAll().size() == 2);
+
+        User follower = userRepository.findByEmail(validUser.getEmail());
+        User followee = userRepository.findByEmail("tempUser@gmail.com");
+
+        followeeeRepository.save(new Followee(follower.getId(), followee.getId()));
+
+        assertTrue(followeeeRepository.findByFollowerId(follower.getId()).size() == 1);
+
+        followeeeRepository.save(new Followee(follower.getId(), followee.getId()));
+
+        // An exception is not thrown, but the new Followee is not added for a second time in the db
+        assertTrue(followeeeRepository.findByFollowerId(follower.getId()).size() == 1);
+    }
+
+    @Test
+    void testFollowerRetrieval() {
+        userRepository.save(User.builder()
+                .email(validUser.getEmail())
+                .password(validUser.getPassword())
+                .build());
+
+        userRepository.save(User.builder()
+                .email("tempUser@gmail.com")
+                .password("tempuserpasswrod")
+                .build());
+
+        userRepository.save(User.builder()
+                .email("tempUser2@gmail.com")
+                .password("tempuserpasswrod")
+                .build());
+
+        assertTrue(userRepository.findAll().size() == 3);
+
+        User follower = userRepository.findByEmail(validUser.getEmail());
+        User followee = userRepository.findByEmail("tempUser@gmail.com");
+        User follower2 = userRepository.findByEmail("tempUser2@gmail.com");
+
+        followeeeRepository.save(new Followee(follower.getId(), followee.getId()));
+        followeeeRepository.save(new Followee(follower2.getId(), followee.getId()));
+
+        assertTrue(followeeeRepository.findByFolloweeId(followee.getId()).size() == 2);
     }
 }
