@@ -242,7 +242,7 @@ public class EntityTests {
     }
 
     @Test
-    void testFollowerRetrival() {
+    void testFollowerRetrieval() {
         userRepository.save(User.builder()
                 .email(validUser.getEmail())
                 .password(validUser.getPassword())
