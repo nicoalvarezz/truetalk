@@ -1,7 +1,9 @@
 package com.fyp.userservice;
 
+import com.fyp.userservice.model.ConfirmationToken;
 import com.fyp.userservice.model.Followee;
 import com.fyp.userservice.model.User;
+import com.fyp.userservice.repository.ConfirmationTokenRepository;
 import com.fyp.userservice.repository.FolloweeeRepository;
 import com.fyp.userservice.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.TransactionSystemException;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -32,6 +35,9 @@ public class EntityTests {
     @Mock
     private User invalidUser;
 
+    @Mock
+    private ConfirmationToken confirmationToken;
+
     @Container
     static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:latest");
 
@@ -40,6 +46,9 @@ public class EntityTests {
 
     @Autowired
     private FolloweeeRepository followeeeRepository;
+
+    @Autowired
+    private ConfirmationTokenRepository confirmationTokenRepository;
 
     private static int MAX_PASSWORD_LENGTH = 46;
 
@@ -52,7 +61,9 @@ public class EntityTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+        confirmationTokenRepository.deleteAll();
         userRepository.deleteAll();
+
         when(validUser.getId()).thenReturn(uuid);
         when(validUser.getEmail()).thenReturn(EMAIL);
         when(validUser.getPassword()).thenReturn(PASSWORD);
@@ -74,10 +85,7 @@ public class EntityTests {
 
     @Test
     void testInsertValidUser() {
-        userRepository.save(User.builder()
-                .email(validUser.getEmail())
-                .password(validUser.getPassword())
-                .build());
+        saveTestUser(validUser.getEmail(), validUser.getPassword());
 
         assertTrue(userRepository.findAll().size() == 1);
 
@@ -90,76 +98,43 @@ public class EntityTests {
 
     @Test
     void testInsertUserWithInvalidEmail() {
-        assertThrows(TransactionSystemException.class, () -> {
-            userRepository.save(User.builder()
-                    .email(invalidUser.getEmail())
-                    .password(validUser.getPassword())
-                    .build());
-        });
+        assertThrows(TransactionSystemException.class, () -> saveTestUser(invalidUser.getEmail(), validUser.getPassword()));
         assertTrue(userRepository.findAll().size() == 0);
     }
 
     @Test
     void testInsertUserWithEmptyEmail() {
-        assertThrows(TransactionSystemException.class, () -> {
-            userRepository.save(User.builder()
-                    .email("")
-                    .password(validUser.getPassword())
-                    .build());
-        });
+        assertThrows(TransactionSystemException.class, () -> saveTestUser("", validUser.getPassword()));
         assertTrue(userRepository.findAll().size() == 0);
     }
 
     @Test
     void testInsertUserWithNullEmail() {
-        assertThrows(TransactionSystemException.class, () -> {
-            userRepository.save(User.builder()
-                    .email(null)
-                    .password(validUser.getPassword())
-                    .build());
-        });
+        assertThrows(TransactionSystemException.class, () -> saveTestUser(null, validUser.getPassword()));
         assertTrue(userRepository.findAll().size() == 0);
     }
 
     @Test
     void testInsertUserWithTooLongPassword() {
-        assertThrows(DataIntegrityViolationException.class, () -> {
-            userRepository.save(User.builder()
-                    .email(validUser.getEmail())
-                    .password(invalidUser.getPassword())
-                    .build());
-        });
+        assertThrows(DataIntegrityViolationException.class, () -> saveTestUser(validUser.getEmail(), invalidUser.getPassword()));
         assertTrue(userRepository.findAll().size() == 0);
     }
     
     @Test
     void testInsertUserWithEmptyPassword() {
-        assertThrows(TransactionSystemException.class, () -> {
-            userRepository.save(User.builder()
-                    .email(validUser.getEmail())
-                    .password("")
-                    .build());
-        });
+        assertThrows(TransactionSystemException.class, () -> saveTestUser(validUser.getEmail(), ""));
         assertTrue(userRepository.findAll().size() == 0);
     }
 
     @Test
     void testInsertUserWithNullPassword() {
-        assertThrows(TransactionSystemException.class, () -> {
-            userRepository.save(User.builder()
-                    .email(validUser.getEmail())
-                    .password(null)
-                    .build());
-        });
+        assertThrows(TransactionSystemException.class, () -> saveTestUser(validUser.getEmail(), null));
         assertTrue(userRepository.findAll().size() == 0);
     }
 
     @Test
     void testUserRetrievalWithEmail() {
-        userRepository.save(User.builder()
-                .email(validUser.getEmail())
-                .password(validUser.getPassword())
-                .build());
+        saveTestUser(validUser.getEmail(), validUser.getPassword());
 
         assertTrue(userRepository.findAll().size() == 1);
 
@@ -172,10 +147,7 @@ public class EntityTests {
 
     @Test
     void testUserRetrievalWithUuid() {
-        userRepository.save(User.builder()
-                .email(validUser.getEmail())
-                .password(validUser.getPassword())
-                .build());
+        saveTestUser(validUser.getEmail(), validUser.getPassword());
 
         assertTrue(userRepository.findAll().size() == 1);
 
@@ -193,20 +165,15 @@ public class EntityTests {
 
     @Test
     void testValidFollowees() {
-        userRepository.save(User.builder()
-                .email(validUser.getEmail())
-                .password(validUser.getPassword())
-                .build());
+        String tempEmail = "tempUser@gmail.com";
 
-        userRepository.save(User.builder()
-                .email("tempUser@gmail.com")
-                .password("tempuserpasswrod")
-                .build());
+        saveTestUser(validUser.getEmail(), validUser.getPassword());
+        saveTestUser(tempEmail, validUser.getPassword());
 
         assertTrue(userRepository.findAll().size() == 2);
 
         User follower = userRepository.findByEmail(validUser.getEmail());
-        User followee = userRepository.findByEmail("tempUser@gmail.com");
+        User followee = userRepository.findByEmail(tempEmail);
 
         followeeeRepository.save(new Followee(follower.getId(), followee.getId()));
 
@@ -216,20 +183,15 @@ public class EntityTests {
 
     @Test
     void testInvalidFollowees() {
-        userRepository.save(User.builder()
-                .email(validUser.getEmail())
-                .password(validUser.getPassword())
-                .build());
+        String tempEmail = "tempUser@gmail.com";
 
-        userRepository.save(User.builder()
-                .email("tempUser@gmail.com")
-                .password("tempuserpasswrod")
-                .build());
+        saveTestUser(validUser.getEmail(), validUser.getPassword());
+        saveTestUser(tempEmail, validUser.getPassword());
 
         assertTrue(userRepository.findAll().size() == 2);
 
         User follower = userRepository.findByEmail(validUser.getEmail());
-        User followee = userRepository.findByEmail("tempUser@gmail.com");
+        User followee = userRepository.findByEmail(tempEmail);
 
         followeeeRepository.save(new Followee(follower.getId(), followee.getId()));
 
@@ -243,30 +205,79 @@ public class EntityTests {
 
     @Test
     void testFollowerRetrieval() {
-        userRepository.save(User.builder()
-                .email(validUser.getEmail())
-                .password(validUser.getPassword())
-                .build());
+        String tempEmail = "tempUser@gmail.com";
+        String tempEmail2 = "tempUser2@gmail.com";
 
-        userRepository.save(User.builder()
-                .email("tempUser@gmail.com")
-                .password("tempuserpasswrod")
-                .build());
-
-        userRepository.save(User.builder()
-                .email("tempUser2@gmail.com")
-                .password("tempuserpasswrod")
-                .build());
+        saveTestUser(validUser.getEmail(), validUser.getPassword());
+        saveTestUser(tempEmail, validUser.getPassword());
+        saveTestUser(tempEmail2, validUser.getPassword());
 
         assertTrue(userRepository.findAll().size() == 3);
 
         User follower = userRepository.findByEmail(validUser.getEmail());
-        User followee = userRepository.findByEmail("tempUser@gmail.com");
-        User follower2 = userRepository.findByEmail("tempUser2@gmail.com");
+        User followee = userRepository.findByEmail(tempEmail);
+        User follower2 = userRepository.findByEmail(tempEmail2);
 
         followeeeRepository.save(new Followee(follower.getId(), followee.getId()));
         followeeeRepository.save(new Followee(follower2.getId(), followee.getId()));
 
         assertTrue(followeeeRepository.findByFolloweeId(followee.getId()).size() == 2);
+    }
+
+    @Test
+    void testInsertValidConfirmationToken() {
+        saveTestUser(validUser.getEmail(), validUser.getPassword());
+
+        assertTrue(userRepository.findAll().size() == 1);
+
+        User user = userRepository.findByEmail(validUser.getEmail());
+        String token = UUID.randomUUID().toString();
+
+        saveTestConfirmationToken(token, user);
+
+        assertTrue(confirmationTokenRepository.findAll().size() == 1);
+    }
+
+    @Test
+    void testInsertInvalidConfirmationTokenWithNonExistingUser() {
+        String token = UUID.randomUUID().toString();
+        User nonExistingUser = User.builder().email(validUser.getEmail()).password(validUser.getPassword()).build();
+
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> saveTestConfirmationToken(token, nonExistingUser));
+        assertTrue(confirmationTokenRepository.findAll().size() == 0);
+    }
+
+    @Test
+    void testInsertInvalidConfirmationTokenWithNullToken() {
+        saveTestUser(validUser.getEmail(), validUser.getPassword());
+
+        assertTrue(userRepository.findAll().size() == 1);
+
+        User user = userRepository.findByEmail(validUser.getEmail());
+
+        assertThrows(DataIntegrityViolationException.class, () -> saveTestConfirmationToken(null, user));
+        assertTrue(confirmationTokenRepository.findAll().size() == 0);
+    }
+
+    @Test
+    void testInsertInvalidConfirmationTokenWithNullUser() {
+        String token = UUID.randomUUID().toString();
+
+        assertThrows(DataIntegrityViolationException.class, () -> saveTestConfirmationToken(token, null));
+        assertTrue(confirmationTokenRepository.findAll().size() == 0);
+    }
+
+    private void saveTestUser(String email, String password) {
+        userRepository.save(User.builder()
+                .email(email)
+                .password(password)
+                .build());
+    }
+
+    private void saveTestConfirmationToken(String token, User user) {
+        confirmationTokenRepository.save(ConfirmationToken.builder()
+                .token(token)
+                .user(user)
+                .build());
     }
 }

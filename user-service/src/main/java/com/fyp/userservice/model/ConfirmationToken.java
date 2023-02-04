@@ -32,7 +32,7 @@ public class ConfirmationToken {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "token")
+    @Column(name = "token", nullable = false)
     private String token;
 
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
