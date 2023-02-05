@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotNull;
 public class AlethiaRequest {
 
     @NotNull
+    @NotBlank
     private String email;
 
     @Nullable
