@@ -14,9 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.TransactionSystemException;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.UUID;
 
@@ -27,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@Testcontainers
 public class EntityTests {
 
     @Mock
@@ -38,9 +42,6 @@ public class EntityTests {
     @Mock
     private ConfirmationToken confirmationToken;
 
-    @Container
-    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:latest");
-
     @Autowired
     private UserRepository userRepository;
 
@@ -50,6 +51,11 @@ public class EntityTests {
     @Autowired
     private ConfirmationTokenRepository confirmationTokenRepository;
 
+    @Container
+    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:latest")
+            .withUsername("test")
+            .withPassword("root");
+
     private static int MAX_PASSWORD_LENGTH = 46;
 
     private UUID uuid = UUID.randomUUID();
@@ -57,6 +63,12 @@ public class EntityTests {
     private static final String PASSWORD = "some_password";
     private static final String INVALID_EMAIL = "example#example.com";
     private static final String INVALID_PASSWORD = new String(new char[MAX_PASSWORD_LENGTH]).replace("\0", "a");
+
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry dymDynamicPropertyRegistry) {
+        dymDynamicPropertyRegistry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        dymDynamicPropertyRegistry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+    }
 
     @BeforeEach
     void setUp() {
