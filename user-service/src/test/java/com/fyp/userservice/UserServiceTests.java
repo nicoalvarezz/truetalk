@@ -17,6 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.UUID;
@@ -49,6 +53,11 @@ public class UserServiceTests {
     @Autowired
     private ConfirmationTokenRepository confirmationTokenRepository;
 
+    @Container
+    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:latest")
+            .withUsername("test")
+            .withPassword("root");
+
     private static final String EMAIL = "nicoalvarezgarrido@gmail.com";
     private static final String PASSWORD = "dcfnsjdvffnA9cdnsj@";
     private static final String FIRST_NAME = "John";
@@ -65,6 +74,12 @@ public class UserServiceTests {
     private static final String CITY = "Dublin";
     private static final String COUNTY = "Dublin";
     private static final String POSTAL_CODE = "D05 HE37";
+
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry dymDynamicPropertyRegistry) {
+        dymDynamicPropertyRegistry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        dymDynamicPropertyRegistry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+    }
 
     @BeforeEach
     void setUp() {
