@@ -1,4 +1,4 @@
-package com.fyp.postservice.exception;
+package com.fyp.merkurioservice.exception;
 
 import com.fyp.hiveshared.api.responses.ResponseHandler;
 import org.springframework.http.HttpStatus;

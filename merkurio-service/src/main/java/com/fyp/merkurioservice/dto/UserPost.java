@@ -1,4 +1,4 @@
-package com.fyp.postservice.dto;
+package com.fyp.merkurioservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

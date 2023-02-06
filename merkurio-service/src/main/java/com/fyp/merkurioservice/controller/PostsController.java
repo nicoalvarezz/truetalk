@@ -1,8 +1,8 @@
-package com.fyp.postservice.controller;
+package com.fyp.merkurioservice.controller;
 
 import com.fyp.hiveshared.api.responses.ResponseHandler;
-import com.fyp.postservice.dto.UserPost;
-import com.fyp.postservice.service.PostService;
+import com.fyp.merkurioservice.dto.UserPost;
+import com.fyp.merkurioservice.service.MerkurioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ import javax.validation.Valid;
 public class PostsController {
 
     private static String SERVICE = "post-service";
-    private final PostService postService;
+    private final MerkurioService postService;
 
     @PostMapping("/save-post")
     public ResponseEntity<Object> savePost(@Valid @RequestBody UserPost userPost) {

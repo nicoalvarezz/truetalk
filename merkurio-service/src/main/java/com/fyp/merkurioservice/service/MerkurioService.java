@@ -1,8 +1,8 @@
-package com.fyp.postservice.service;
+package com.fyp.merkurioservice.service;
 
-import com.fyp.postservice.dto.UserPost;
-import com.fyp.postservice.model.Post;
-import com.fyp.postservice.repository.PostRepository;
+import com.fyp.merkurioservice.dto.UserPost;
+import com.fyp.merkurioservice.model.Post;
+import com.fyp.merkurioservice.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @Service
 @Component
 @RequiredArgsConstructor
-public class PostService {
+public class MerkurioService {
 
     private final PostRepository postRepository;
 

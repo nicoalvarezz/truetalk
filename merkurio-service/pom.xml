@@ -8,10 +8,10 @@
         <version>2.7.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.fyp.</groupId>
-    <artifactId>post-service</artifactId>
+    <groupId>com.fyp</groupId>
+    <artifactId>merkurio-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>post-service</name>
+    <name>merkurio-service</name>
     <description>post service</description>
     <properties>
         <java.version>17</java.version>
@@ -34,6 +34,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

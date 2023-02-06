@@ -1,4 +1,4 @@
-package com.fyp.postservice.model;
+package com.fyp.merkurioservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
