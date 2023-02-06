@@ -5,27 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
-@Document(value = "post")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
-public class Post {
+public class Comment {
 
     @Id
     private String id;
 
-    private String cratedAt;
+    private String user;
 
     private String text;
 
-    private String user;
-
-    private int likes;
-
-    private List<Comment> comments;
+    private String createdAt;
 }

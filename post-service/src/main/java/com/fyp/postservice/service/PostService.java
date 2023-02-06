@@ -24,8 +24,8 @@ public class PostService {
         // Verify that the user exists!
         Post post = Post.builder()
                 .cratedAt(String.valueOf(Instant.now().getEpochSecond()))
-                .text(verifyUuid(userPost.getText()))
-                .user(userPost.getUser())
+                .text(userPost.getText())
+                .user(verifyUuid(userPost.getUser()))
                 .likes(0)
                 .build();
 
