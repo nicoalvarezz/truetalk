@@ -1,6 +1,5 @@
 package com.fyp.postservice.controller;
 
-import com.fyp.hiveshared.api.responses.ResponseHandler;
 import com.fyp.hiveshared.api.responses.ResponseHandlers;
 import com.fyp.postservice.dto.UserPost;
 import com.fyp.postservice.service.PostService;
@@ -27,9 +26,9 @@ public class PostsController {
     private final PostService postService;
 
     @PostMapping("/save-post")
-    public ResponseEntity<Object> savePost(@Valid @RequestBody UserPost userPost) {
+    public ResponseEntity<Map<String, Object>> savePost(@Valid @RequestBody UserPost userPost) {
         postService.savePost(userPost);
-        return ResponseHandler.responseBody("Post saved successfully", HttpStatus.CREATED, SERVICE);
+        return ResponseHandlers.baseResponseBody("Post saved successfully", HttpStatus.CREATED, SERVICE);
     }
 
     @GetMapping("/list-followee-posts")
@@ -37,7 +36,7 @@ public class PostsController {
         return ResponseHandlers.responseBodyWithData("List of followee post retrieved successfully",
                 HttpStatus.OK,
                 SERVICE,
-                new HashMap<>(){{ put("followees", postService.getFolloweePosts(uuid));}}
+                new HashMap<>(){{ put("followees_posts", postService.getFolloweePosts(uuid));}}
         );
     }
 }
