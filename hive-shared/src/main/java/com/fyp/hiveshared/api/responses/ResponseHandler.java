@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+@Deprecated
 public class ResponseHandler {
 
     public static ResponseEntity<Object> responseBody(String message, HttpStatus status, String service) {

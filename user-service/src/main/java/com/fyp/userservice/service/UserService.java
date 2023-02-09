@@ -8,12 +8,15 @@ import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
+import com.fyp.userservice.dto.FollowRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.model.ConfirmationToken;
+import com.fyp.userservice.model.Followee;
 import com.fyp.userservice.model.User;
 import com.fyp.userservice.model.UserVerifiedProfile;
 import com.fyp.userservice.repository.ConfirmationTokenRepository;
+import com.fyp.userservice.repository.FolloweeeRepository;
 import com.fyp.userservice.repository.UserRepository;
 import com.fyp.userservice.repository.UserVerifiedProfileRepository;
 import com.fyp.userservice.eventListener.OnRegistrationCompleteEvent;
@@ -29,7 +32,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Component
@@ -46,10 +52,10 @@ public class UserService implements ConfirmUser {
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final UserVerifiedProfileRepository userVerifiedProfileRepository;
+    private final FolloweeeRepository followeeeRepository;
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-    private static final String POST_METHOD = "POST";
     private static final String EMPTY_ACCESS_TOKEN = "";
 
     private static ObjectMapper MAPPER = new ObjectMapper()
@@ -88,8 +94,7 @@ public class UserService implements ConfirmUser {
         User user = getVerificationToken(token).getUser();
         AlethiaRequest alethiaRequest = MAPPER.convertValue(user, AlethiaRequest.class);
         ApiHelpers.makeApiRequest(
-                ApiHelpers.generateRequest(
-                        POST_METHOD,
+                ApiHelpers.postRequest(
                         alethiaProperties.getAlethiaTriggerVerificationEndpoint(),
                         RequestBody.create(MAPPER.writeValueAsString(alethiaRequest), JSON),
                         EMPTY_ACCESS_TOKEN
@@ -101,8 +106,7 @@ public class UserService implements ConfirmUser {
     public void triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
         AlethiaRequest alethiaRequest = MAPPER.convertValue(registerUserRequest, AlethiaRequest.class);
         ApiHelpers.makeApiRequest(
-                ApiHelpers.generateRequest(
-                        POST_METHOD,
+                ApiHelpers.postRequest(
                         alethiaProperties.getAlethiaTriggerVerificationEndpoint(),
                         RequestBody.create(MAPPER.writeValueAsString(alethiaRequest), JSON),
                         EMPTY_ACCESS_TOKEN
@@ -153,9 +157,26 @@ public class UserService implements ConfirmUser {
 
     @Override
     public void createVerificationToken(User user, String token) {
-        confirmationTokenRepository.save(ConfirmationToken.builder()
-                                            .token(token)
-                                            .user(user)
-                                            .build());
+        confirmationTokenRepository.save(
+                ConfirmationToken.builder()
+                        .token(token)
+                        .user(user)
+                        .build());
+    }
+
+    public void follow(FollowRequest followRequest) {
+        followeeeRepository.save(
+                Followee.builder()
+                        .followeeId(UUID.fromString(followRequest.getFolloweeId()))
+                        .followerId(UUID.fromString(followRequest.getFollowerId()))
+                        .build());
+    }
+
+    public List<UUID> getFollowees(String uuid) {
+        return followeeeRepository.findByFollowerId(
+                UUID.fromString(uuid))
+                        .stream()
+                        .map(Followee::getFolloweeId)
+                        .collect(Collectors.toList());
     }
 }

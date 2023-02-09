@@ -3,6 +3,7 @@ package com.fyp.userservice.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.hiveshared.api.responses.ResponseHandler;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
+import com.fyp.userservice.dto.FollowRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.service.UserService;
@@ -20,6 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.fyp.hiveshared.api.responses.ResponseHandlers.responseBodyWithData;
 
 @RestController
 @RequestMapping("/api/users")
@@ -59,5 +64,20 @@ public class UserController {
     public ResponseEntity<Object> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
         return ResponseHandler.responseBody("User profile information received and user created", HttpStatus.CREATED, SERVICE);
+    }
+
+    @PostMapping("/follow")
+    public ResponseEntity<Object> follow(@Valid @RequestBody FollowRequest followRequest) {
+        userService.follow(followRequest);
+        return ResponseHandler.responseBody("User successfully followed", HttpStatus.CREATED, SERVICE);
+    }
+
+    @GetMapping("/list-followees")
+    public ResponseEntity<Map<String, Object>> listFollowees(@Valid @RequestParam(value = "uuid") String uuid) {
+        return responseBodyWithData(
+                "list of followees retrived successfully",
+                HttpStatus.OK, SERVICE,
+                new HashMap<>(){{ put("followee_post", userService.getFollowees(uuid));}}
+        );
     }
 }
