@@ -2,12 +2,14 @@ package com.fyp.postservice.service;
 
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import com.fyp.hiveshared.api.responses.ResponseDeserializer;
+import com.fyp.postservice.config.UserServiceProperties;
 import com.fyp.postservice.dto.UserPost;
 import com.fyp.postservice.model.Post;
 import com.fyp.postservice.repository.PostRepository;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,9 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class PostService {
+
+    @Autowired
+    private UserServiceProperties userServiceProperties;
 
     private final PostRepository postRepository;
     private static final String EMPTY_ACCESS_TOKEN = "";
@@ -44,7 +49,7 @@ public class PostService {
     private List<String> requestFolowees(String follower) {
         Response response = ApiHelpers.makeApiRequest(
                 ApiHelpers.getRequest(
-                        "http://user-service:8000/api/users/list-followees",
+                        userServiceProperties.getUserListFollowees(),
                         new HashMap<>() {{put("uuid", follower);}},
                         EMPTY_ACCESS_TOKEN
                 )
