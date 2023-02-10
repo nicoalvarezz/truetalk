@@ -28,12 +28,12 @@ public class PostsController {
     @PostMapping("/save-post")
     public ResponseEntity<Map<String, Object>> savePost(@Valid @RequestBody UserPost userPost) {
         postService.savePost(userPost);
-        return ResponseHandlers.baseResponseBody("Post saved successfully", HttpStatus.CREATED, SERVICE);
+        return ResponseHandlers.responseBody("Post saved successfully", HttpStatus.CREATED, SERVICE);
     }
 
     @GetMapping("/list-followee-posts")
     public ResponseEntity<Map<String, Object>> listFolloweePost(@RequestParam(value = "uuid") String uuid) {
-        return ResponseHandlers.responseBodyWithData("List of followee post retrieved successfully",
+        return ResponseHandlers.responseBody("List of followee post retrieved successfully",
                 HttpStatus.OK,
                 SERVICE,
                 new HashMap<>(){{ put("followees_posts", postService.getFolloweePosts(uuid));}}

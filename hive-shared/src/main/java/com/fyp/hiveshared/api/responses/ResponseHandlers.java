@@ -17,7 +17,7 @@ public class ResponseHandlers {
     private static final String TIMESTAMP = "timestamp";
     private static final String DATA = "data";
 
-    public static ResponseEntity<Map<String, Object>> baseResponseBody(String message, HttpStatus status, String service) {
+    public static ResponseEntity<Map<String, Object>> responseBody(String message, HttpStatus status, String service) {
         return new ResponseEntity<>(new HashMap<>() {{
                 put(MESSAGE, message);
                 put(METHOD, status);
@@ -28,7 +28,7 @@ public class ResponseHandlers {
     }
 
 
-    public static ResponseEntity<Map<String, Object>> responseBodyWithData(String message, HttpStatus status, String service, Map<String, Object> data){
+    public static ResponseEntity<Map<String, Object>> responseBody(String message, HttpStatus status, String service, Map<String, Object> data){
         return new ResponseEntity<>(new HashMap<>() {{
             put(MESSAGE, message);
             put(METHOD, status);

@@ -37,14 +37,14 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> registerUser(@Valid @RequestBody RegisterUserRequest registerUserRequest, HttpServletRequest request) {
         userService.registerUser(registerUserRequest);
         userService.publishConfirmationEvent(registerUserRequest, request.getLocale(), request.getContextPath());
-        return ResponseHandlers.baseResponseBody("User registered successfully", HttpStatus.CREATED, SERVICE);
+        return ResponseHandlers.responseBody("User registered successfully", HttpStatus.CREATED, SERVICE);
     }
 
     @GetMapping("/registration-confirm")
     public ResponseEntity<Map<String, Object>> registrationConfirm(@RequestParam(value = "token", required = false) String token) throws UnauthorizedException, JsonProcessingException {
         userService.confirmUser(token);
         userService.triggerAlethiaVerification(token);
-        return ResponseHandlers.baseResponseBody("User confirmed successfully", HttpStatus.OK, SERVICE);
+        return ResponseHandlers.responseBody("User confirmed successfully", HttpStatus.OK, SERVICE);
     }
 
     // TODO:
@@ -54,25 +54,25 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> triggerAlethiaVerification(@Valid @RequestBody RegisterUserRequest registerUserRequest) throws IOException {
         userService.triggerAlethiaVerification(registerUserRequest);
-        return ResponseHandlers.baseResponseBody("Verification triggered in alethia", HttpStatus.OK, SERVICE);
+        return ResponseHandlers.responseBody("Verification triggered in alethia", HttpStatus.OK, SERVICE);
     }
 
     @PostMapping("/receive-user-profile")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
-        return ResponseHandlers.baseResponseBody("User profile information received and user created", HttpStatus.CREATED, SERVICE);
+        return ResponseHandlers.responseBody("User profile information received and user created", HttpStatus.CREATED, SERVICE);
     }
 
     @PostMapping("/follow")
     public ResponseEntity<Map<String, Object>> follow(@Valid @RequestBody FollowRequest followRequest) {
         userService.follow(followRequest);
-        return ResponseHandlers.baseResponseBody("User successfully followed", HttpStatus.CREATED, SERVICE);
+        return ResponseHandlers.responseBody("User successfully followed", HttpStatus.CREATED, SERVICE);
     }
 
     @GetMapping("/list-followees")
     public ResponseEntity<Map<String, Object>> listFollowees(@Valid @RequestParam(value = "uuid") String uuid) {
-        return ResponseHandlers.responseBodyWithData(
+        return ResponseHandlers.responseBody(
                 "list of followees retrived successfully",
                 HttpStatus.OK, SERVICE,
                 new HashMap<>(){{ put("followees", userService.getFollowees(uuid));}}

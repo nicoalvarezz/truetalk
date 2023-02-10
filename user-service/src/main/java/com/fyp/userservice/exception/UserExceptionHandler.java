@@ -22,16 +22,16 @@ public class UserExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity<Map<String, Object>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
-        return ResponseHandlers.baseResponseBody(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
+        return ResponseHandlers.responseBody(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
     protected ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
-        return ResponseHandlers.baseResponseBody(CONSTRAINT_VIOLATION_ERROR, HttpStatus.CONFLICT, SERVICE);
+        return ResponseHandlers.responseBody(CONSTRAINT_VIOLATION_ERROR, HttpStatus.CONFLICT, SERVICE);
     }
 
     @ExceptionHandler({UnauthorizedException.class})
     protected ResponseEntity<Map<String, Object>> handleUnauthorizedException(UnauthorizedException ex, WebRequest request) {
-        return ResponseHandlers.baseResponseBody(ex.getMessage(), ex.getStatus(), SERVICE);
+        return ResponseHandlers.responseBody(ex.getMessage(), ex.getStatus(), SERVICE);
     }
 }

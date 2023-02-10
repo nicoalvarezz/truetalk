@@ -20,11 +20,11 @@ public class AlethiaExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
-        return ResponseHandlers.baseResponseBody(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
+        return ResponseHandlers.responseBody(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
     }
 
     @ExceptionHandler(ServiceUnavailableException.class)
     public ResponseEntity<?> handleServiceUnavailableException(ServiceUnavailableException ex, WebRequest request) {
-        return ResponseHandlers.baseResponseBody(ex.getMessage(), HttpStatus.SERVICE_UNAVAILABLE, SERVICE);
+        return ResponseHandlers.responseBody(ex.getMessage(), HttpStatus.SERVICE_UNAVAILABLE, SERVICE);
     }
 }

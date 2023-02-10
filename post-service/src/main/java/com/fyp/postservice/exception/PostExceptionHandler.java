@@ -18,11 +18,11 @@ public class PostExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity<Map<String, Object>> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, WebRequest request) {
-        return ResponseHandlers.baseResponseBody(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
+        return ResponseHandlers.responseBody(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
     }
 
     @ExceptionHandler({IllegalArgumentException.class})
     protected ResponseEntity<Map<String, Object>> handleIllegalArgumentException() {
-        return ResponseHandlers.baseResponseBody(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
+        return ResponseHandlers.responseBody(METHOD_ARGUMENT_ERROR, HttpStatus.BAD_REQUEST, SERVICE);
     }
 }
