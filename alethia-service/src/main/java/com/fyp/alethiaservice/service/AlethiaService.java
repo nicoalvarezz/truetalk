@@ -39,7 +39,6 @@ public class AlethiaService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final String EMPTY_ACCESS_TOKEN = "";
-    private static final String POST_METHOD = "POST";
 
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
@@ -58,8 +57,7 @@ public class AlethiaService {
                 .build();
 
         Response response = ApiHelpers.makeApiRequest(
-                ApiHelpers.generateRequest(
-                        POST_METHOD,
+                ApiHelpers.postRequest(
                         idPalProperties.getSendVerificationLinkEndpoint(),
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
                         idPalProperties.getAccessToken()
@@ -86,8 +84,7 @@ public class AlethiaService {
                 .build();
 
         Response response = ApiHelpers.makeApiRequest(
-                ApiHelpers.generateRequest(
-                        POST_METHOD,
+                ApiHelpers.postRequest(
                         idPalProperties.getGetSubmissionDetailsEndpoint(),
                         RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
                         idPalProperties.getAccessToken()
@@ -100,8 +97,7 @@ public class AlethiaService {
 
     public void sendUserProfileToUserService(UserProfileInfo userProfileInfo) throws JsonProcessingException {
         ApiHelpers.makeApiRequest(
-                ApiHelpers.generateRequest(
-                        POST_METHOD,
+                ApiHelpers.postRequest(
                         userServiceProperties.getReceiveUserProfileEndpoint(),
                         RequestBody.create(MAPPER.writeValueAsString(userProfileInfo), JSON),
                         EMPTY_ACCESS_TOKEN
@@ -115,8 +111,7 @@ public class AlethiaService {
             return;
         } else {
             Response response = ApiHelpers.makeApiRequest(
-                    ApiHelpers.generateRequest(
-                            POST_METHOD,
+                    ApiHelpers.postRequest(
                             idPalProperties.getAccessTokenEndpoint(),
                             RequestBody.create(MAPPER.writeValueAsString(getRenewTokenBody()), JSON),
                             accessToken
