@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.hiveshared.api.responses.ResponseHandlers;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.dto.FollowRequest;
+import com.fyp.userservice.dto.LoginUserRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.service.UserService;
@@ -62,6 +63,15 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
         return ResponseHandlers.responseBody("User profile information received and user created", HttpStatus.CREATED, SERVICE);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginUserRequest loginUserRequest) {
+        return ResponseHandlers.responseBody(
+                "token generated successfully",
+                HttpStatus.OK, SERVICE,
+                new HashMap<>(){{ put("token", userService.generateToken(loginUserRequest));}}
+        );
     }
 
     @PostMapping("/follow")
