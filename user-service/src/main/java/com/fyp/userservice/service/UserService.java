@@ -29,6 +29,7 @@ import okhttp3.RequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,8 @@ public class UserService implements ConfirmUser {
     @Autowired
     ApplicationEventPublisher eventPublisher;
 
+    @Value("${jwtSecret}")
+    private String jwtSecret;
 
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -197,7 +200,7 @@ public class UserService implements ConfirmUser {
                 .withPayload(
                         new HashMap<>(){{ put("uuid", validateUser(loginUserRequest));}}
                 )
-                .sign(Algorithm.HMAC256("Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E="));
+                .sign(Algorithm.HMAC256(jwtSecret));
     }
 
     private String validateUser(LoginUserRequest loginUserRequest) {
