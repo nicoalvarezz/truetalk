@@ -150,7 +150,7 @@ public class EntityTests {
 
         assertTrue(userRepository.findAll().size() == 1);
 
-        User tempUser = userRepository.findByEmail(validUser.getEmail());
+        User tempUser = userRepository.findByEmail(validUser.getEmail()).get();
         assertEquals(tempUser.getEmail(), validUser.getEmail());
         assertEquals(tempUser.getPassword(), validUser.getPassword());
         assertEquals(tempUser.isEnabled(), validUser.isEnabled());
@@ -184,8 +184,8 @@ public class EntityTests {
 
         assertTrue(userRepository.findAll().size() == 2);
 
-        User follower = userRepository.findByEmail(validUser.getEmail());
-        User followee = userRepository.findByEmail(tempEmail);
+        User follower = userRepository.findByEmail(validUser.getEmail()).get();
+        User followee = userRepository.findByEmail(tempEmail).get();
 
         followeeeRepository.save(new Followee(follower.getId(), followee.getId()));
 
@@ -202,8 +202,8 @@ public class EntityTests {
 
         assertTrue(userRepository.findAll().size() == 2);
 
-        User follower = userRepository.findByEmail(validUser.getEmail());
-        User followee = userRepository.findByEmail(tempEmail);
+        User follower = userRepository.findByEmail(validUser.getEmail()).get();
+        User followee = userRepository.findByEmail(tempEmail).get();
 
         followeeeRepository.save(new Followee(follower.getId(), followee.getId()));
 
@@ -226,9 +226,9 @@ public class EntityTests {
 
         assertTrue(userRepository.findAll().size() == 3);
 
-        User follower = userRepository.findByEmail(validUser.getEmail());
-        User followee = userRepository.findByEmail(tempEmail);
-        User follower2 = userRepository.findByEmail(tempEmail2);
+        User follower = userRepository.findByEmail(validUser.getEmail()).get();
+        User followee = userRepository.findByEmail(tempEmail).get();
+        User follower2 = userRepository.findByEmail(tempEmail2).get();
 
         followeeeRepository.save(new Followee(follower.getId(), followee.getId()));
         followeeeRepository.save(new Followee(follower2.getId(), followee.getId()));
@@ -242,7 +242,7 @@ public class EntityTests {
 
         assertTrue(userRepository.findAll().size() == 1);
 
-        User user = userRepository.findByEmail(validUser.getEmail());
+        User user = userRepository.findByEmail(validUser.getEmail()).get();
         String token = UUID.randomUUID().toString();
 
         saveTestConfirmationToken(token, user);
@@ -265,7 +265,7 @@ public class EntityTests {
 
         assertTrue(userRepository.findAll().size() == 1);
 
-        User user = userRepository.findByEmail(validUser.getEmail());
+        User user = userRepository.findByEmail(validUser.getEmail()).get();
 
         assertThrows(DataIntegrityViolationException.class, () -> saveTestConfirmationToken(null, user));
         assertTrue(confirmationTokenRepository.findAll().size() == 0);

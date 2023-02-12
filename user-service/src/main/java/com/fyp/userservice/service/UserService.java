@@ -1,5 +1,7 @@
 package com.fyp.userservice.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -9,6 +11,7 @@ import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.FollowRequest;
+import com.fyp.userservice.dto.LoginUserRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.model.ConfirmationToken;
@@ -26,12 +29,16 @@ import okhttp3.RequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -48,6 +55,8 @@ public class UserService implements ConfirmUser {
     @Autowired
     ApplicationEventPublisher eventPublisher;
 
+    @Value("${jwtSecret}")
+    private String jwtSecret;
 
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -57,6 +66,8 @@ public class UserService implements ConfirmUser {
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private static final String EMPTY_ACCESS_TOKEN = "";
+    private static final String INVALID_EMAIL_ERROR = "Invalid email";
+    private static final String INVALID_EMAIL_PASSWORD = "Invalid password";
 
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
@@ -115,9 +126,8 @@ public class UserService implements ConfirmUser {
     }
 
     public void saveUserProfileInfo(UserProfile userProfileInfo) {
-        // TODO:
-        // Make sure that the if the user does not exist or already has been verified throws an error.
-        User user = userRepository.findByEmail(userProfileInfo.getEmail());
+        User user = userRepository.findByEmail(userProfileInfo.getEmail())
+                        .orElseThrow(() -> new UnauthorizedException(INVALID_EMAIL_ERROR));
         user.setVerified(true);
 
         UserVerifiedProfile userVerifiedProfile = UserVerifiedProfile.builder()
@@ -141,7 +151,8 @@ public class UserService implements ConfirmUser {
     }
 
     public void publishConfirmationEvent(RegisterUserRequest userRequest, Locale locale, String appUrl) {
-        User user = userRepository.findByEmail(userRequest.getEmail());
+        User user = userRepository.findByEmail(userRequest.getEmail())
+                        .orElseThrow(() -> new UnauthorizedException(INVALID_EMAIL_ERROR));
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, locale, appUrl));
     }
 
@@ -178,5 +189,34 @@ public class UserService implements ConfirmUser {
                         .stream()
                         .map(Followee::getFolloweeId)
                         .collect(Collectors.toList());
+    }
+
+    public String generateToken(LoginUserRequest loginUserRequest) {
+        Date now = new Date(System.currentTimeMillis());
+
+        return JWT.create()
+                .withIssuedAt(now)
+                .withExpiresAt(getTokenExpireTime(now))
+                .withPayload(
+                        new HashMap<>(){{ put("uuid", validateUser(loginUserRequest));}}
+                )
+                .sign(Algorithm.HMAC256(jwtSecret));
+    }
+
+    private String validateUser(LoginUserRequest loginUserRequest) {
+        User user = userRepository.findByEmail(loginUserRequest.getEmail())
+                        .orElseThrow(() -> new UnauthorizedException(INVALID_EMAIL_ERROR));
+
+        if (!user.getPassword().equals(loginUserRequest.getPassword())) {
+            throw new UnauthorizedException(INVALID_EMAIL_PASSWORD);
+        }
+        return user.getId().toString();
+    }
+
+    private Date getTokenExpireTime(Date now) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.HOUR_OF_DAY, 24);
+        return calendar.getTime();
     }
 }
