@@ -12,6 +12,7 @@ import com.fyp.alethiaservice.dto.idpal.IdpalRenewAccessToken;
 import com.fyp.alethiaservice.dto.users.UserProfileInfo;
 import com.fyp.alethiaservice.dto.users.UserRequest;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
+import com.fyp.hiveshared.api.helpers.JwtHelpers;
 import com.fyp.hiveshared.api.responses.excpetion.ServiceUnavailableException;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -107,7 +108,7 @@ public class AlethiaService {
 
     public void renewIdpalAccessToken() throws IOException {
         String accessToken = idPalProperties.getAccessToken();
-        if (!ApiHelpers.isAccessTokenExpired(accessToken)) {
+        if (!JwtHelpers.isAccessTokenExpired(accessToken)) {
             return;
         } else {
             Response response = ApiHelpers.makeApiRequest(

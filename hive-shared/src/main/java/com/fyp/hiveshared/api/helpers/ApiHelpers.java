@@ -58,10 +58,6 @@ public class ApiHelpers {
                 .build();
     }
 
-    public static boolean isAccessTokenExpired(String accessToken) {
-        return JWT.decode(accessToken).getExpiresAt().before(new Date());
-    }
-
     private static Headers getHeaders(String accessToken) {
         return !accessToken.isEmpty()
                 ? new Headers.Builder()

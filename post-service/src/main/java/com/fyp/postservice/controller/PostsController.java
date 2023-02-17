@@ -36,7 +36,18 @@ public class PostsController {
         return ResponseHandlers.responseBody("List of followee post retrieved successfully",
                 HttpStatus.OK,
                 SERVICE,
-                new HashMap<>(){{ put("followees_posts", postService.getFolloweePosts(uuid));}}
+                new HashMap<>(){{ put("followees_posts", postService.getFolloweePosts(uuid)); }}
+        );
+    }
+
+    @GetMapping("/user-posts")
+    public ResponseEntity<Map<String, Object>> userPosts(@RequestParam(value = "uuid") String uuid) {
+        // Return a list of all the posts that a user has posted
+        return ResponseHandlers.responseBody(
+                "user posts retrieve successfully",
+                HttpStatus.OK,
+                SERVICE,
+                new HashMap<>(){{ put("user_posts", postService.getUserPosts(uuid)); }}
         );
     }
 }

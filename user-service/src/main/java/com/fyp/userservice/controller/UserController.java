@@ -9,7 +9,6 @@ import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
 import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,7 +69,8 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginUserRequest loginUserRequest) {
         return ResponseHandlers.responseBody(
                 "token generated successfully",
-                HttpStatus.OK, SERVICE,
+                HttpStatus.OK,
+                SERVICE,
                 new HashMap<>(){{ put("token", userService.generateToken(loginUserRequest));}}
         );
     }
@@ -85,8 +85,23 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> listFollowees(@Valid @RequestParam(value = "uuid") String uuid) {
         return ResponseHandlers.responseBody(
                 "list of followees retrived successfully",
-                HttpStatus.OK, SERVICE,
+                HttpStatus.OK,
+                SERVICE,
                 new HashMap<>(){{ put("followees", userService.getFollowees(uuid));}}
+        );
+    }
+
+    @GetMapping("/user-profile")
+    public ResponseEntity<Map<String, Object>> userProfilePage(@Valid @RequestParam(value = "uuid") String uuid) {
+        return ResponseHandlers.responseBody(
+                "User profile information",
+                HttpStatus.OK,
+                SERVICE,
+                new HashMap<>(){{
+                    put("name", userService.getUserName(uuid));
+                    put("country", userService.getUserCountry(uuid));
+                    put("language", userService.getUserLanguage(uuid));
+                }}
         );
     }
 }
