@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
+import com.fyp.hiveshared.api.helpers.JwtHelpers;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
@@ -14,6 +15,7 @@ import com.fyp.userservice.dto.FollowRequest;
 import com.fyp.userservice.dto.LoginUserRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
+import com.fyp.userservice.helpers.CountryLanguages;
 import com.fyp.userservice.model.ConfirmationToken;
 import com.fyp.userservice.model.Followee;
 import com.fyp.userservice.model.User;
@@ -68,7 +70,9 @@ public class UserService implements ConfirmUser {
     private static final String EMPTY_ACCESS_TOKEN = "";
     private static final String INVALID_EMAIL_ERROR = "Invalid email";
     private static final String INVALID_EMAIL_PASSWORD = "Invalid password";
+    private static final String INVALID_USER_USER = "Invalid user";
 
+    private CountryLanguages countryLanguages = new CountryLanguages();
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -218,5 +222,27 @@ public class UserService implements ConfirmUser {
         calendar.setTime(now);
         calendar.add(Calendar.HOUR_OF_DAY, 24);
         return calendar.getTime();
+    }
+
+    public String getUserName(String uuid) {
+        return getUserVerifiedProfile(uuid).getFirstName() + " " + getUserVerifiedProfile(uuid).getLastName();
+    }
+
+    public String getUserCountry(String uuid) {
+        return getUserVerifiedProfile(uuid).getCountryName();
+    }
+
+    public String getUserLanguage(String uuid) {
+        return countryLanguages.getLanguage(getUserCountry(uuid));
+    }
+
+    private UserVerifiedProfile getUserVerifiedProfile(String uuid) {
+        return userVerifiedProfileRepository.findById(UUID.fromString(uuid))
+                        .orElseThrow(() -> new UnauthorizedException(INVALID_USER_USER));
+    }
+
+    private String getUuidFromToken(String token) {
+        return JwtHelpers.getPayload(token,  jwtSecret, "uuid")
+                .orElseThrow(() -> new UnauthorizedException(INVALID_USER_USER));
     }
 }

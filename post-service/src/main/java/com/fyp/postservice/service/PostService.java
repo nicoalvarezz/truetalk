@@ -71,6 +71,10 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    public List<Post> getUserPosts(String uuid) {
+        return postRepository.findByUser(uuid);
+    }
+
     private String verifyUuid(String uuid) {
         UUID.fromString(uuid);
         return uuid;
