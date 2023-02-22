@@ -229,7 +229,7 @@ public class UserService implements ConfirmUser {
     }
 
     public String getUserCountry(String uuid) {
-        return getUserVerifiedProfile(uuid).getCountryName();
+        return getUserVerifiedProfile(uuid).getCountryOfBirth();
     }
 
     public String getUserLanguage(String uuid) {
