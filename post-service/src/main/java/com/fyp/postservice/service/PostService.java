@@ -40,16 +40,35 @@ public class PostService {
                 .cratedAt(String.valueOf(Instant.now().getEpochSecond()))
                 .text(userPost.getText())
                 .user(verifyUuid(userPost.getUser()))
+                .name(getUserName(userPost.getUser()))
                 .likes(0)
                 .build();
 
         postRepository.save(post);
     }
 
+    private String getUserName(String uuid) {
+        Response response = ApiHelpers.makeApiRequest(
+                ApiHelpers.getRequest(
+                        userServiceProperties.getUserProfileEndpoint(),
+                        new HashMap<>() {{put("uuid", uuid);}},
+                        EMPTY_ACCESS_TOKEN
+                )
+        );
+
+        try {
+            ResponseDeserializer responseDeserializer = new Gson().fromJson(response.body().string(), ResponseDeserializer.class);
+            return (String) responseDeserializer.getData().get("name");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private List<String> requestFolowees(String follower) {
         Response response = ApiHelpers.makeApiRequest(
                 ApiHelpers.getRequest(
-                        userServiceProperties.getUserListFollowees(),
+                        userServiceProperties.getListFolloweesEndpoint(),
                         new HashMap<>() {{put("uuid", follower);}},
                         EMPTY_ACCESS_TOKEN
                 )

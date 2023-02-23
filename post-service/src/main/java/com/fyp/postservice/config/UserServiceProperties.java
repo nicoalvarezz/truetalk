@@ -6,14 +6,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserServiceProperties {
 
-    private final String userListFollowees;
+    private final String listFolloweesEndpoint;
+    private final String userProfileEndpoint;
 
     public UserServiceProperties(
-            @Value("${userservice.endpoint.listFollowees}") String userListFollowees) {
-        this.userListFollowees = userListFollowees;
+            @Value("${userservice.endpoint.listFollowees}") String listFolloweesEndpoint,
+            @Value("${userservice.endpoint.userProfile}") String userProfileEndpoint) {
+        this.listFolloweesEndpoint = listFolloweesEndpoint;
+        this.userProfileEndpoint = userProfileEndpoint;
     }
 
-    public String getUserListFollowees() {
-        return userListFollowees;
+    public String getListFolloweesEndpoint() {
+        return listFolloweesEndpoint;
+    }
+
+    public String getUserProfileEndpoint() {
+        return userProfileEndpoint;
     }
 }

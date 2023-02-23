@@ -25,6 +25,8 @@ public class Post {
 
     private String user;
 
+    private String name;
+
     private int likes;
 
     private List<Comment> comments;
