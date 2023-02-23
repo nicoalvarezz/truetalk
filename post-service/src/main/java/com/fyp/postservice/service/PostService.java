@@ -98,4 +98,16 @@ public class PostService {
         UUID.fromString(uuid);
         return uuid;
     }
+
+    public void likePost(String postId) {
+        Post post = postRepository.findById(postId).orElseThrow(IllegalArgumentException::new);
+        post.setLikes(post.getLikes() + 1);
+        postRepository.save(post);
+    }
+
+    public void unlikePost(String postId) {
+        Post post = postRepository.findById(postId).orElseThrow(IllegalArgumentException::new);
+        post.setLikes(post.getLikes() - 1);
+        postRepository.save(post);
+    }
 }
