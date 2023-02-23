@@ -31,8 +31,8 @@ public class PostsController {
         return ResponseHandlers.responseBody("Post saved successfully", HttpStatus.CREATED, SERVICE);
     }
 
-    @GetMapping("/list-followee-posts")
-    public ResponseEntity<Map<String, Object>> listFolloweePost(@RequestParam(value = "uuid") String uuid) {
+    @GetMapping("/followee-posts")
+    public ResponseEntity<Map<String, Object>> followeePost(@RequestParam(value = "uuid") String uuid) {
         return ResponseHandlers.responseBody("List of followee post retrieved successfully",
                 HttpStatus.OK,
                 SERVICE,

@@ -19,6 +19,7 @@ public class ResponseDeserializer {
 
     private Map<String, Object> data;
 
+
     public Map<String, Object> getData() {
         return data;
     }
