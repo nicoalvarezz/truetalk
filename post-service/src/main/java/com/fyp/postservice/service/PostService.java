@@ -104,4 +104,10 @@ public class PostService {
         post.setLikes(post.getLikes() + 1);
         postRepository.save(post);
     }
+
+    public void unlikePost(String postId) {
+        Post post = postRepository.findById(postId).orElseThrow(IllegalArgumentException::new);
+        post.setLikes(post.getLikes() - 1);
+        postRepository.save(post);
+    }
 }

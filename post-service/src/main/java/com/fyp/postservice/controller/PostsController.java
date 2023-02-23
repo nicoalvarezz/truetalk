@@ -56,4 +56,10 @@ public class PostsController {
         postService.likePost(postId);
         return ResponseHandlers.responseBody("Post liked successfully", HttpStatus.CREATED, SERVICE);
     }
+
+    @PutMapping("/unlike")
+    public ResponseEntity<Map<String, Object>> unlike(@RequestParam(value = "post_id") String postId) {
+        postService.unlikePost(postId);
+        return ResponseHandlers.responseBody("Post unliked successfully", HttpStatus.CREATED, SERVICE);
+    }
 }
