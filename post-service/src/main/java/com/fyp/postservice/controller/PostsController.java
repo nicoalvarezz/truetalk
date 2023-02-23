@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,12 +43,17 @@ public class PostsController {
 
     @GetMapping("/user-posts")
     public ResponseEntity<Map<String, Object>> userPosts(@RequestParam(value = "uuid") String uuid) {
-        // Return a list of all the posts that a user has posted
         return ResponseHandlers.responseBody(
                 "user posts retrieve successfully",
                 HttpStatus.OK,
                 SERVICE,
                 new HashMap<>(){{ put("user_posts", postService.getUserPosts(uuid)); }}
         );
+    }
+
+    @PutMapping("/like")
+    public ResponseEntity<Map<String, Object>> like(@RequestParam(value = "post_id") String postId) {
+        postService.likePost(postId);
+        return ResponseHandlers.responseBody("Post liked successfully", HttpStatus.CREATED, SERVICE);
     }
 }
