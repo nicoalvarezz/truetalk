@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.Id;
+
+@Document(value = "comment")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -16,6 +19,8 @@ public class Comment {
     private String id;
 
     private String user;
+
+    private String name;
 
     private String text;
 

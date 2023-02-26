@@ -19,7 +19,7 @@ public class Post {
     @Id
     private String id;
 
-    private String cratedAt;
+    private String createdAt;
 
     private String text;
 
@@ -27,7 +27,7 @@ public class Post {
 
     private String name;
 
-    private int likes;
+    private List<String> likes;
 
     private List<Comment> comments;
 }
