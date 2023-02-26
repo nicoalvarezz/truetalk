@@ -1,6 +1,9 @@
 package com.fyp.postservice.controller;
 
 import com.fyp.hiveshared.api.responses.ResponseHandlers;
+import com.fyp.postservice.dto.PostComment;
+import com.fyp.postservice.dto.PostLike;
+import com.fyp.postservice.dto.PostUnlike;
 import com.fyp.postservice.dto.UserPost;
 import com.fyp.postservice.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -52,14 +55,30 @@ public class PostsController {
     }
 
     @PutMapping("/like")
-    public ResponseEntity<Map<String, Object>> like(@RequestParam(value = "post_id") String postId) {
-        postService.likePost(postId);
-        return ResponseHandlers.responseBody("Post liked successfully", HttpStatus.CREATED, SERVICE);
+    public ResponseEntity<Map<String, Object>> like(@Valid @RequestBody PostLike postLike) {
+        postService.likePost(postLike);
+        return ResponseHandlers.responseBody("Post liked successfully", HttpStatus.OK, SERVICE);
     }
 
     @PutMapping("/unlike")
-    public ResponseEntity<Map<String, Object>> unlike(@RequestParam(value = "post_id") String postId) {
-        postService.unlikePost(postId);
-        return ResponseHandlers.responseBody("Post unliked successfully", HttpStatus.CREATED, SERVICE);
+    public ResponseEntity<Map<String, Object>> unlike(@Valid @RequestBody PostUnlike postUnlike){
+        postService.unlikePost(postUnlike);
+        return ResponseHandlers.responseBody("Post unliked successfully", HttpStatus.OK, SERVICE);
+    }
+
+    @PostMapping("/comment")
+    public ResponseEntity<Map<String, Object>> comment(@RequestBody PostComment postComment) {
+        postService.savePostComment(postComment);
+        return ResponseHandlers.responseBody("Post commented saved successfully", HttpStatus.CREATED, SERVICE);
+    }
+
+    @GetMapping("/likes")
+    public ResponseEntity<Map<String, Object>> likes(@RequestParam(value = "post_id") String postId) {
+        return ResponseHandlers.responseBody(
+                "Post likes retrieved successfully",
+                HttpStatus.OK,
+                SERVICE,
+                new HashMap<>(){{ put("post_likes", postService.getLikes(postId)); }}
+        );
     }
 }
