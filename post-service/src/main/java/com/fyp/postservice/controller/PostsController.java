@@ -73,7 +73,7 @@ public class PostsController {
     }
 
     @GetMapping("/likes")
-    public ResponseEntity<Map<String, Object>> likes(@RequestParam(value = "pot_id") String postId) {
+    public ResponseEntity<Map<String, Object>> likes(@RequestParam(value = "post_id") String postId) {
         return ResponseHandlers.responseBody(
                 "Post likes retrieved successfully",
                 HttpStatus.OK,
