@@ -90,10 +90,11 @@ public class PostService {
         return null;
     }
 
-    public List<List<Post>> getFolloweePosts(String follower) {
+    public List<Post> getFolloweePosts(String follower) {
         return requestFolowees(follower)
                 .stream()
                 .map(postRepository::findByUser)
+                .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 

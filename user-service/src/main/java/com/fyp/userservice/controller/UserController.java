@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.hiveshared.api.responses.ResponseHandlers;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.dto.FollowRequest;
+import com.fyp.userservice.dto.UnfollowRequest;
 import com.fyp.userservice.dto.LoginUserRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
@@ -11,6 +12,7 @@ import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -79,6 +81,12 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> follow(@Valid @RequestBody FollowRequest followRequest) {
         userService.follow(followRequest);
         return ResponseHandlers.responseBody("User successfully followed", HttpStatus.CREATED, SERVICE);
+    }
+
+    @PostMapping("/unfollow")
+    public ResponseEntity<Map<String, Object>> unfollow(@Valid @RequestBody UnfollowRequest unfollowRequest) {
+        userService.unfollow(unfollowRequest);
+        return ResponseHandlers.responseBody("User successfully unfollowed", HttpStatus.OK, SERVICE);
     }
 
     @GetMapping("/list-followees")
