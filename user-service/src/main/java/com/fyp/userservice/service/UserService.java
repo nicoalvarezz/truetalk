@@ -12,6 +12,7 @@ import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.FollowRequest;
+import com.fyp.userservice.dto.UnfollowRequest;
 import com.fyp.userservice.dto.LoginUserRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
 import com.fyp.userservice.dto.UserProfile;
@@ -184,6 +185,14 @@ public class UserService implements ConfirmUser {
                 Followee.builder()
                         .followeeId(UUID.fromString(followRequest.getFolloweeId()))
                         .followerId(UUID.fromString(followRequest.getFollowerId()))
+                        .build());
+    }
+
+    public void unfollow(UnfollowRequest unfollowRequest) {
+        followeeeRepository.delete(
+                Followee.builder()
+                        .followeeId(UUID.fromString(unfollowRequest.getFolloweeId()))
+                        .followerId(UUID.fromString(unfollowRequest.getFollowerId()))
                         .build());
     }
 
