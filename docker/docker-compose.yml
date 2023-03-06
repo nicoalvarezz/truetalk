@@ -25,6 +25,47 @@ services:
     ports:
       - '8002:8002'
 
+  producer-service:
+    container_name: producer_service
+    build:
+      context: ../
+      dockerfile: docker/producer-service/Dockerfile
+    ports:
+      - '8003:8003'
+
+  consumer-service:
+    container_name: consumer-service
+    build:
+      context: ../
+      dockerfile: docker/consumer-service/Dockerfile
+    ports:
+      - '8004:8004'
+
+  # https://www.baeldung.com/ops/kafka-docker-setup
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:2902
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
   # The purpose of this container is to open up alethia-service to the internet. This will allow testing webhooks
   ngrok-test-webhooks:
     container_name: ngrok_test_webhooks

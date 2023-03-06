@@ -10,5 +10,4 @@ RUN mvn -f /home/post-service/pom.xml clean package -Dmaven.test.skip=true
 # PACKAGE STAGE
 FROM openjdk:17-jdk-slim
 COPY --from=build /home/post-service/target/post-service-0.0.1-SNAPSHOT.jar /usr/local/lib/post-service.jar
-EXPOSE 8001
 ENTRYPOINT ["java","-jar","/usr/local/lib/post-service.jar"]
