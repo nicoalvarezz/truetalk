@@ -11,17 +11,22 @@ public class EmailSender {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void postNotification(String followeeName, String recipientAddress) {
-        String subject = followeeName + "Just Posted!";
-        String emailContent = "We wanted to give you a heads up that " + followeeName + " just posted something new on our platform! It's always exciting to see new content from the people we follow, right?\n" +
-                "\n" +
-                "So, what are you waiting for? Head on over to our platform and check out what " + followeeName + " has been up to. Don't forget to like, comment, and share their post to show your support.\nBest,\n" +
-                "TrueTalk Team";
+    @Autowired
+    private MailContents mailContents;
 
+    public void postNotification(String recipientName, String recipientAddress) {
+        String subject = recipientName + " " + mailContents.getPostNotificationSubject();
+        String emailContent =  mailContents.getPostNotificationFirstPart() + " " + recipientName + " " +
+                               mailContents.getPostNotificationSecondPart() + " " + recipientName + " " +
+                               mailContents.getPostNotificationThirdPart();
+        sendEmail(recipientAddress, subject, emailContent);
+    }
+
+    public void sendEmail(String address, String subject, String content) {
         SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(recipientAddress);
+        email.setTo(address);
         email.setSubject(subject);
-        email.setText(emailContent);
+        email.setText(content);
         mailSender.send(email);
     }
 }

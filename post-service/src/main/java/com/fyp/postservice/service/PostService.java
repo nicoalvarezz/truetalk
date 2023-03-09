@@ -1,12 +1,11 @@
 package com.fyp.postservice.service;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import com.fyp.hiveshared.api.responses.ResponseDeserializer;
-import com.fyp.postservice.config.ProducerServaiceProperties;
+import com.fyp.postservice.config.ProducerServiceProperties;
 import com.fyp.postservice.config.UserServiceProperties;
 import com.fyp.postservice.dto.PostComment;
 import com.fyp.postservice.dto.PostLike;
@@ -44,7 +43,7 @@ public class PostService {
     private UserServiceProperties userServiceProperties;
 
     @Autowired
-    private ProducerServaiceProperties producerServaiceProperties;
+    private ProducerServiceProperties producerServaiceProperties;
 
     @Autowired
     private CommentRepository commentRepository;

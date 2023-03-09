@@ -19,7 +19,6 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerConfig.class);
     private static final String GROUP_ID = "test-group";
 
     @Value("${kafka.bootstrapAddress}")

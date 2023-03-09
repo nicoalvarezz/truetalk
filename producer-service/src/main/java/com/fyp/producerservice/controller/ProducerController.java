@@ -27,7 +27,6 @@ public class ProducerController {
 
     @PostMapping("/notify-followers")
     public ResponseEntity<Map<String, Object>> notifyFollowers(@Valid @RequestBody PostSender postSender) {
-        System.out.println("UUID: " + postSender.getUuid());
         kafkaSender.send(POST_NOTIFICATION_TOPIC, postSender.getUuid());
         return ResponseHandlers.responseBody("Post notification event produced successfully", HttpStatus.OK, SERVICE);
     }

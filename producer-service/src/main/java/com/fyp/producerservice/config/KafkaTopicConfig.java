@@ -26,7 +26,7 @@ public class KafkaTopicConfig {
     }
 
     @Bean
-    public NewTopic topic1() {
+    public NewTopic postNotificationTopic() {
         return new NewTopic(POST_NOTIFICATION_TOPIC, 1, (short) 1);
     }
 }
