@@ -58,6 +58,9 @@ public class UserService implements ConfirmUser {
     @Autowired
     ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    EmailSender emailSender;
+
     @Value("${jwtSecret}")
     private String jwtSecret;
 
@@ -204,6 +207,13 @@ public class UserService implements ConfirmUser {
                         .collect(Collectors.toList());
     }
 
+    private List<UUID> getFollowers(String uuid) {
+        return followeeeRepository.findByFolloweeId(UUID.fromString(uuid))
+                .stream()
+                .map(Followee::getFollowerId)
+                .collect(Collectors.toList());
+    }
+
     public String generateToken(LoginUserRequest loginUserRequest) {
         Date now = new Date(System.currentTimeMillis());
 
@@ -253,5 +263,16 @@ public class UserService implements ConfirmUser {
     private String getUuidFromToken(String token) {
         return JwtHelpers.getPayload(token,  jwtSecret, "uuid")
                 .orElseThrow(() -> new UnauthorizedException(INVALID_USER_USER));
+    }
+
+    public void sendPostNotification(String uuid) {
+        String followeeName = getUserName(uuid);
+        getFollowers(uuid)
+                .forEach(follower -> {
+                    User recipientUser = userRepository
+                            .findById(follower)
+                            .orElseThrow(() -> new UnauthorizedException(INVALID_USER_USER));
+                    emailSender.postNotification(followeeName, recipientUser.getEmail());
+                });
     }
 }

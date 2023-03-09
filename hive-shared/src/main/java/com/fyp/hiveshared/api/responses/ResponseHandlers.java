@@ -27,7 +27,6 @@ public class ResponseHandlers {
         }}, status);
     }
 
-
     public static ResponseEntity<Map<String, Object>> responseBody(String message, HttpStatus status, String service, Map<String, Object> data){
         return new ResponseEntity<>(new HashMap<>() {{
             put(MESSAGE, message);

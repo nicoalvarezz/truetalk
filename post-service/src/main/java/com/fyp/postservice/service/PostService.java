@@ -1,10 +1,16 @@
 package com.fyp.postservice.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import com.fyp.hiveshared.api.responses.ResponseDeserializer;
+import com.fyp.postservice.config.ProducerServaiceProperties;
 import com.fyp.postservice.config.UserServiceProperties;
 import com.fyp.postservice.dto.PostComment;
 import com.fyp.postservice.dto.PostLike;
+import com.fyp.postservice.dto.PostSender;
 import com.fyp.postservice.dto.PostUnlike;
 import com.fyp.postservice.dto.UserPost;
 import com.fyp.postservice.model.Comment;
@@ -13,6 +19,8 @@ import com.fyp.postservice.repository.CommentRepository;
 import com.fyp.postservice.repository.PostRepository;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,10 +44,18 @@ public class PostService {
     private UserServiceProperties userServiceProperties;
 
     @Autowired
+    private ProducerServaiceProperties producerServaiceProperties;
+
+    @Autowired
     private CommentRepository commentRepository;
 
     private final PostRepository postRepository;
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final String EMPTY_ACCESS_TOKEN = "";
+
+    private static ObjectMapper MAPPER = new ObjectMapper()
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public void savePost(UserPost userPost) {
         Post post = Post.builder()
@@ -140,5 +156,15 @@ public class PostService {
     public List<String> getLikes(String postId) {
         Post post = postRepository.findById(postId).orElseThrow(IllegalArgumentException::new);
         return post.getLikes();
+    }
+
+    public void notifyFollowers(String user) throws IOException {
+        ApiHelpers.makeApiRequest(
+                ApiHelpers.postRequest(
+                        producerServaiceProperties.getNotifyFollowersEndpoint(),
+                        RequestBody.create(MAPPER.writeValueAsString(PostSender.builder().user(user).build()), JSON),
+                        EMPTY_ACCESS_TOKEN
+                )
+        );
     }
 }

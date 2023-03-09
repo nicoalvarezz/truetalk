@@ -34,7 +34,7 @@ services:
       - '8003:8003'
 
   consumer-service:
-    container_name: consumer-service
+    container_name: consumer_service
     build:
       context: ../
       dockerfile: docker/consumer-service/Dockerfile
