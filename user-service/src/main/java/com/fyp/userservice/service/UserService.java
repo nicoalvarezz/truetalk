@@ -278,8 +278,7 @@ public class UserService implements ConfirmUser {
     }
 
     public void findUserByFirstAndLastName(String firstName, String lastName) {
-        userVerifiedProfileRepository.findByFirsNameAndLastName(firstName, lastName)
+        userVerifiedProfileRepository.findByFirstNameAndLastName(firstName, lastName)
                 .orElseThrow(() -> new NotFoundException("User not found"));
-
     }
 }

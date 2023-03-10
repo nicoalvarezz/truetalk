@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface UserVerifiedProfileRepository extends JpaRepository<UserVerifiedProfile, UUID> {
 
-    Optional<UserVerifiedProfile> findByFirsNameAndLastName(String firstName, String lastName);
+    Optional<UserVerifiedProfile> findByFirstNameAndLastName(String firstName, String lastName);
 }
