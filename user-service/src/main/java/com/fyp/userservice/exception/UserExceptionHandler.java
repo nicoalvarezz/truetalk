@@ -1,6 +1,7 @@
 package com.fyp.userservice.exception;
 
 import com.fyp.hiveshared.api.responses.ResponseHandlers;
+import com.fyp.hiveshared.api.responses.excpetion.NotFoundException;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,11 @@ public class UserExceptionHandler {
 
     @ExceptionHandler({UnauthorizedException.class})
     protected ResponseEntity<Map<String, Object>> handleUnauthorizedException(UnauthorizedException ex, WebRequest request) {
+        return ResponseHandlers.responseBody(ex.getMessage(), ex.getStatus(), SERVICE);
+    }
+
+    @ExceptionHandler({NotFoundException.class})
+    protected ResponseEntity<Map<String, Object>> handleNotFoundException(NotFoundException ex, WebRequest request) {
         return ResponseHandlers.responseBody(ex.getMessage(), ex.getStatus(), SERVICE);
     }
 }

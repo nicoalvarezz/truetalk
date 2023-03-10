@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import com.fyp.hiveshared.api.helpers.JwtHelpers;
+import com.fyp.hiveshared.api.responses.excpetion.NotFoundException;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
@@ -75,8 +76,9 @@ public class UserService implements ConfirmUser {
     private static final String INVALID_EMAIL_ERROR = "Invalid email";
     private static final String INVALID_EMAIL_PASSWORD = "Invalid password";
     private static final String INVALID_USER_USER = "Invalid user";
+    private static final String USER_NOT_FOUND = "User not found";
 
-    private CountryLanguages countryLanguages = new CountryLanguages();
+    private final CountryLanguages countryLanguages = new CountryLanguages();
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -257,7 +259,7 @@ public class UserService implements ConfirmUser {
 
     private UserVerifiedProfile getUserVerifiedProfile(String uuid) {
         return userVerifiedProfileRepository.findById(UUID.fromString(uuid))
-                        .orElseThrow(() -> new UnauthorizedException(INVALID_USER_USER));
+                        .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
     private String getUuidFromToken(String token) {
@@ -271,8 +273,13 @@ public class UserService implements ConfirmUser {
                 .forEach(follower -> {
                     User recipientUser = userRepository
                             .findById(follower)
-                            .orElseThrow(() -> new UnauthorizedException(INVALID_USER_USER));
+                            .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
                     emailSender.postNotification(followeeName, recipientUser.getEmail());
                 });
+    }
+
+    public void findUserByFirstAndLastName(String firstName, String lastName) {
+        userVerifiedProfileRepository.findByFirstNameAndLastName(firstName, lastName)
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 }
