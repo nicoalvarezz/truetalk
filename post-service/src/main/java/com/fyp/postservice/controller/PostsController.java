@@ -1,5 +1,6 @@
 package com.fyp.postservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.hiveshared.api.responses.ResponseHandlers;
 import com.fyp.postservice.dto.PostComment;
 import com.fyp.postservice.dto.PostLike;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +32,9 @@ public class PostsController {
     private final PostService postService;
 
     @PostMapping("/save-post")
-    public ResponseEntity<Map<String, Object>> savePost(@Valid @RequestBody UserPost userPost) {
+    public ResponseEntity<Map<String, Object>> savePost(@Valid @RequestBody UserPost userPost) throws IOException {
         postService.savePost(userPost);
+        postService.notifyFollowers(userPost.getUser());
         return ResponseHandlers.responseBody("Post saved successfully", HttpStatus.CREATED, SERVICE);
     }
 

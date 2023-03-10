@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.hiveshared.api.responses.ResponseHandlers;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.dto.FollowRequest;
+import com.fyp.userservice.dto.PostSender;
 import com.fyp.userservice.dto.UnfollowRequest;
 import com.fyp.userservice.dto.LoginUserRequest;
 import com.fyp.userservice.dto.RegisterUserRequest;
@@ -111,5 +112,11 @@ public class UserController {
                     put("language", userService.getUserLanguage(uuid));
                 }}
         );
+    }
+
+    @PostMapping("/send-post-notification")
+    public ResponseEntity<Map<String, Object>> sendPostNotification(@Valid @RequestBody PostSender postSender) {
+        userService.sendPostNotification(postSender.getUuid());
+        return ResponseHandlers.responseBody("Post notification sent successfully", HttpStatus.OK, SERVICE);
     }
 }
