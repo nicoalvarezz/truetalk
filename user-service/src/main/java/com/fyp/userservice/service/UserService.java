@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import com.fyp.hiveshared.api.helpers.JwtHelpers;
+import com.fyp.hiveshared.api.responses.excpetion.NotFoundException;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.config.AlethiaProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
@@ -274,5 +275,11 @@ public class UserService implements ConfirmUser {
                             .orElseThrow(() -> new UnauthorizedException(INVALID_USER_USER));
                     emailSender.postNotification(followeeName, recipientUser.getEmail());
                 });
+    }
+
+    public void findUserByFirstAndLastName(String firstName, String lastName) {
+        userVerifiedProfileRepository.findByFirsNameAndLastName(firstName, lastName)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
     }
 }

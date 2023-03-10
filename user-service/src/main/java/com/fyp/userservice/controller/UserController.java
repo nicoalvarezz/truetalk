@@ -13,7 +13,6 @@ import com.fyp.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -118,5 +117,11 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> sendPostNotification(@Valid @RequestBody PostSender postSender) {
         userService.sendPostNotification(postSender.getUuid());
         return ResponseHandlers.responseBody("Post notification sent successfully", HttpStatus.OK, SERVICE);
+    }
+
+    @GetMapping("/find-user")
+    public ResponseEntity<Map<String, Object>> findUser(@Valid @RequestParam("first_name") String firstName, @Valid @RequestParam("last_name") String lastName) {
+        userService.findUserByFirstAndLastName(firstName, lastName);
+        return ResponseHandlers.responseBody("User found", HttpStatus.OK, SERVICE);
     }
 }
