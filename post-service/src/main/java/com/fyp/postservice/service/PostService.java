@@ -157,7 +157,7 @@ public class PostService {
         return post.getLikes();
     }
 
-    public void notifyFollowers(String user) throws IOException {
+    public void publishNotifyFollowersEvent(String user) throws IOException {
         ApiHelpers.makeApiRequest(
                 ApiHelpers.postRequest(
                         producerServaiceProperties.getNotifyFollowersEndpoint(),

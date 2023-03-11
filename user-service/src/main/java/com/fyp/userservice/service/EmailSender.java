@@ -5,6 +5,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class EmailSender {
 
@@ -19,6 +21,14 @@ public class EmailSender {
         String emailContent =  mailContents.getPostNotificationFirstPart() + " " + recipientName + " " +
                                mailContents.getPostNotificationSecondPart() + " " + recipientName + " " +
                                mailContents.getPostNotificationThirdPart();
+        sendEmail(recipientAddress, subject, emailContent);
+    }
+
+    public void confirmationEmail(String recipientAddress, String token) {
+        String subject = mailContents.getConfirmationEmailSubject();
+        String confirmationUrl = "/registration-confirm?token=" + token;
+        String emailContent = mailContents.getConfirmationEmailFirstPart() + "\r\n" + "http://localhost:8000/api/users" + confirmationUrl + "\n\n" +
+                              mailContents.getConfirmationEmailSecondPart();
         sendEmail(recipientAddress, subject, emailContent);
     }
 
