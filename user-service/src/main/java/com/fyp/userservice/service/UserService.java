@@ -292,8 +292,9 @@ public class UserService implements ConfirmUser {
         emailSender.confirmationEmail(email, token);
     }
 
-    public void findUserByFirstAndLastName(String firstName, String lastName) {
-        userVerifiedProfileRepository.findByFirstNameAndLastName(firstName, lastName)
+    public String findUserByFirstAndLastName(String firstName, String lastName) {
+        UserVerifiedProfile user = userVerifiedProfileRepository.findByFirstNameAndLastName(firstName, lastName)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+        return user.getUser().getId().toString();
     }
 }

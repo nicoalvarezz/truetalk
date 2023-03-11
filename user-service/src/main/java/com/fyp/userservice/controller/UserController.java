@@ -55,9 +55,6 @@ public class UserController {
         return ResponseHandlers.responseBody("User confirmed successfully", HttpStatus.OK, SERVICE);
     }
 
-    // TODO:
-    // Define when this endpoint will be called ?????
-    // This is something that has me confused as when this endpoint will be triggered...
     @PostMapping("/trigger-alethia-verification")
     public ResponseEntity<Map<String, Object>> triggerAlethiaVerification(@Valid @RequestBody RegisterUserRequest registerUserRequest) throws IOException {
         userService.triggerAlethiaVerification(registerUserRequest);
@@ -125,7 +122,13 @@ public class UserController {
 
     @GetMapping("/find-user")
     public ResponseEntity<Map<String, Object>> findUser(@Valid @RequestParam("first_name") String firstName, @Valid @RequestParam("last_name") String lastName) {
-        userService.findUserByFirstAndLastName(firstName, lastName);
-        return ResponseHandlers.responseBody("User found", HttpStatus.OK, SERVICE);
+        return ResponseHandlers.responseBody(
+                "User found",
+                HttpStatus.OK,
+                SERVICE,
+                new HashMap<>(){{
+                    put("uuid", userService.findUserByFirstAndLastName(firstName, lastName));
+                }}
+        );
     }
 }
