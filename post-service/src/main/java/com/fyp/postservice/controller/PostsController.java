@@ -1,6 +1,5 @@
 package com.fyp.postservice.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.hiveshared.api.responses.ResponseHandlers;
 import com.fyp.postservice.dto.PostComment;
 import com.fyp.postservice.dto.PostLike;
@@ -34,7 +33,7 @@ public class PostsController {
     @PostMapping("/save-post")
     public ResponseEntity<Map<String, Object>> savePost(@Valid @RequestBody UserPost userPost) throws IOException {
         postService.savePost(userPost);
-        postService.notifyFollowers(userPost.getUser());
+        postService.publishNotifyFollowersEvent(userPost.getUser());
         return ResponseHandlers.responseBody("Post saved successfully", HttpStatus.CREATED, SERVICE);
     }
 

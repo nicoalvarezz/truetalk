@@ -11,7 +11,9 @@ import com.fyp.hiveshared.api.helpers.JwtHelpers;
 import com.fyp.hiveshared.api.responses.excpetion.NotFoundException;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.config.AlethiaProperties;
+import com.fyp.userservice.config.ProducerServiceProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
+import com.fyp.userservice.dto.ConfirmationUser;
 import com.fyp.userservice.dto.FollowRequest;
 import com.fyp.userservice.dto.UnfollowRequest;
 import com.fyp.userservice.dto.LoginUserRequest;
@@ -26,7 +28,6 @@ import com.fyp.userservice.repository.ConfirmationTokenRepository;
 import com.fyp.userservice.repository.FolloweeeRepository;
 import com.fyp.userservice.repository.UserRepository;
 import com.fyp.userservice.repository.UserVerifiedProfileRepository;
-import com.fyp.userservice.eventListener.OnRegistrationCompleteEvent;
 import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -44,7 +45,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -55,6 +55,9 @@ public class UserService implements ConfirmUser {
 
     @Autowired
     private AlethiaProperties alethiaProperties;
+
+    @Autowired
+    private ProducerServiceProperties producerServiceProperties;
 
     @Autowired
     ApplicationEventPublisher eventPublisher;
@@ -158,12 +161,6 @@ public class UserService implements ConfirmUser {
 
         userVerifiedProfileRepository.save(userVerifiedProfile);
         LOGGER.info("User with uuid {}, successfully verified ", userVerifiedProfile.getUuid());
-    }
-
-    public void publishConfirmationEvent(RegisterUserRequest userRequest, Locale locale, String appUrl) {
-        User user = userRepository.findByEmail(userRequest.getEmail())
-                        .orElseThrow(() -> new UnauthorizedException(INVALID_EMAIL_ERROR));
-        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, locale, appUrl));
     }
 
     @Override
@@ -276,6 +273,23 @@ public class UserService implements ConfirmUser {
                             .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
                     emailSender.postNotification(followeeName, recipientUser.getEmail());
                 });
+    }
+
+    public void publishConfirmationEmailEvent(String email) throws JsonProcessingException {
+        ApiHelpers.makeApiRequest(
+                ApiHelpers.postRequest(
+                        producerServiceProperties.getConfirmationEmailEventEndpoint(),
+                        RequestBody.create(MAPPER.writeValueAsString(ConfirmationUser.builder().email(email).build()), JSON),
+                        EMPTY_ACCESS_TOKEN
+                )
+        );
+    }
+
+    public void sendConfirmationEmail(String email) {
+        String token = UUID.randomUUID().toString();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UnauthorizedException(INVALID_USER_USER));
+        createVerificationToken(user, token);
+        emailSender.confirmationEmail(email, token);
     }
 
     public void findUserByFirstAndLastName(String firstName, String lastName) {

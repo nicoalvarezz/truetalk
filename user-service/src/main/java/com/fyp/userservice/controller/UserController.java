@@ -3,6 +3,7 @@ package com.fyp.userservice.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fyp.hiveshared.api.responses.ResponseHandlers;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
+import com.fyp.userservice.dto.ConfirmationUser;
 import com.fyp.userservice.dto.FollowRequest;
 import com.fyp.userservice.dto.PostSender;
 import com.fyp.userservice.dto.UnfollowRequest;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,11 +36,16 @@ public class UserController {
     private static final String SERVICE = "user-service";
 
     @PostMapping("/register-user")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> registerUser(@Valid @RequestBody RegisterUserRequest registerUserRequest, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> registerUser(@Valid @RequestBody RegisterUserRequest registerUserRequest) throws JsonProcessingException {
         userService.registerUser(registerUserRequest);
-        userService.publishConfirmationEvent(registerUserRequest, request.getLocale(), request.getContextPath());
+        userService.publishConfirmationEmailEvent(registerUserRequest.getEmail());
         return ResponseHandlers.responseBody("User registered successfully", HttpStatus.CREATED, SERVICE);
+    }
+
+    @PostMapping("/send-confirmation-email")
+    public ResponseEntity<Map<String, Object>> sendConfirmationEmail(@Valid @RequestBody ConfirmationUser confirmationUser) {
+        userService.sendConfirmationEmail(confirmationUser.getEmail());
+        return ResponseHandlers.responseBody("Confirmation email sent successfully", HttpStatus.CREATED, SERVICE);
     }
 
     @GetMapping("/registration-confirm")
@@ -54,7 +59,6 @@ public class UserController {
     // Define when this endpoint will be called ?????
     // This is something that has me confused as when this endpoint will be triggered...
     @PostMapping("/trigger-alethia-verification")
-    @ResponseBody
     public ResponseEntity<Map<String, Object>> triggerAlethiaVerification(@Valid @RequestBody RegisterUserRequest registerUserRequest) throws IOException {
         userService.triggerAlethiaVerification(registerUserRequest);
         return ResponseHandlers.responseBody("Verification triggered in alethia", HttpStatus.OK, SERVICE);

@@ -22,6 +22,14 @@ public class EmailSender {
         sendEmail(recipientAddress, subject, emailContent);
     }
 
+    public void confirmationEmail(String recipientAddress, String token) {
+        String subject = mailContents.getConfirmationEmailSubject();
+        String confirmationUrl = "/registration-confirm?token=" + token;
+        String emailContent = mailContents.getConfirmationEmailFirstPart() + "\r\n" + "http://localhost:8000/api/users" + confirmationUrl + "\n\n" +
+                              mailContents.getConfirmationEmailSecondPart();
+        sendEmail(recipientAddress, subject, emailContent);
+    }
+
     public void sendEmail(String address, String subject, String content) {
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(address);

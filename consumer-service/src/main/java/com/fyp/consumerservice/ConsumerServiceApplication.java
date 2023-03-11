@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fyp.consumerservice.config.UserServiceProperties;
+import com.fyp.consumerservice.dto.ConfirmationUser;
 import com.fyp.consumerservice.dto.PostSender;
 import com.fyp.hiveshared.api.helpers.ApiHelpers;
 import okhttp3.MediaType;
@@ -22,6 +23,7 @@ public class ConsumerServiceApplication {
 	private UserServiceProperties userServiceProperties;
 
 	private static final String POST_NOTIFICATION_TOPIC = "post-notification-topic";
+	private static final String CONFIRMATION_EMAIL_TOPIC = "confirmation-email-topic";
 	private static final String TEST_GROUP = "test-group";
 	private static final String EMPTY_ACCESS_TOKEN = "";
 	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -38,8 +40,19 @@ public class ConsumerServiceApplication {
 	public void userPostEventListener(String uuid) throws IOException {
 		ApiHelpers.makeApiRequest(
 				ApiHelpers.postRequest(
-						userServiceProperties.getSendPostNoificationEndpoint(),
+						userServiceProperties.getSendPostNotificationEndpoint(),
 						RequestBody.create(MAPPER.writeValueAsString(PostSender.builder().uuid(uuid).build()), JSON),
+						EMPTY_ACCESS_TOKEN
+				)
+		);
+	}
+
+	@KafkaListener(topics = CONFIRMATION_EMAIL_TOPIC, groupId = TEST_GROUP)
+	public void confirmationEmailEventListener(String email) throws IOException{
+		ApiHelpers.makeApiRequest(
+				ApiHelpers.postRequest(
+						userServiceProperties.getSendConfirmationEmailEndpoint(),
+						RequestBody.create(MAPPER.writeValueAsString(ConfirmationUser.builder().email(email).build()), JSON),
 						EMPTY_ACCESS_TOKEN
 				)
 		);
