@@ -11,6 +11,7 @@ import com.fyp.hiveshared.api.helpers.JwtHelpers;
 import com.fyp.hiveshared.api.responses.excpetion.NotFoundException;
 import com.fyp.hiveshared.api.responses.excpetion.UnauthorizedException;
 import com.fyp.userservice.config.AlethiaProperties;
+import com.fyp.userservice.config.ProducerServiceProperties;
 import com.fyp.userservice.dto.AlethiaRequest;
 import com.fyp.userservice.dto.ConfirmationUser;
 import com.fyp.userservice.dto.FollowRequest;
@@ -54,6 +55,9 @@ public class UserService implements ConfirmUser {
 
     @Autowired
     private AlethiaProperties alethiaProperties;
+
+    @Autowired
+    private ProducerServiceProperties producerServiceProperties;
 
     @Autowired
     ApplicationEventPublisher eventPublisher;
@@ -274,7 +278,7 @@ public class UserService implements ConfirmUser {
     public void publishConfirmationEmailEvent(String email) throws JsonProcessingException {
         ApiHelpers.makeApiRequest(
                 ApiHelpers.postRequest(
-                        "http://producer-service:8003/api/producer/confirmation-email-event",
+                        producerServiceProperties.getConfirmationEmailEventEndpoint(),
                         RequestBody.create(MAPPER.writeValueAsString(ConfirmationUser.builder().email(email).build()), JSON),
                         EMPTY_ACCESS_TOKEN
                 )

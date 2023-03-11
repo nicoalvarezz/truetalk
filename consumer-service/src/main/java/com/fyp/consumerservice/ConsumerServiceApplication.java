@@ -40,7 +40,7 @@ public class ConsumerServiceApplication {
 	public void userPostEventListener(String uuid) throws IOException {
 		ApiHelpers.makeApiRequest(
 				ApiHelpers.postRequest(
-						userServiceProperties.getSendPostNoificationEndpoint(),
+						userServiceProperties.getSendPostNotificationEndpoint(),
 						RequestBody.create(MAPPER.writeValueAsString(PostSender.builder().uuid(uuid).build()), JSON),
 						EMPTY_ACCESS_TOKEN
 				)
@@ -51,7 +51,7 @@ public class ConsumerServiceApplication {
 	public void confirmationEmailEventListener(String email) throws IOException{
 		ApiHelpers.makeApiRequest(
 				ApiHelpers.postRequest(
-						"http://user-service:8000/api/users/send-confirmation-email",
+						userServiceProperties.getSendConfirmationEmailEndpoint(),
 						RequestBody.create(MAPPER.writeValueAsString(ConfirmationUser.builder().email(email).build()), JSON),
 						EMPTY_ACCESS_TOKEN
 				)

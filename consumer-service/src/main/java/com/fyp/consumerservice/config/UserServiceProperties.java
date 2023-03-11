@@ -6,14 +6,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserServiceProperties {
 
-    private final String sendPostNoificationEndpoint;
+    private final String sendPostNotificationEndpoint;
+    private final String sendConfirmationEmailEndpoint;
 
     public UserServiceProperties(
-            @Value("${userService.endpoint.sendPostNotification}") String sendPostNoificationEndpoint) {
-        this.sendPostNoificationEndpoint = sendPostNoificationEndpoint;
+            @Value("${userService.endpoint.sendPostNotification}") String sendPostNoificationEndpoint,
+            @Value("${userService.endpoint.sendConfirmationEmail}") String sendConfirmationEmailEndpoint) {
+        this.sendPostNotificationEndpoint = sendPostNoificationEndpoint;
+        this.sendConfirmationEmailEndpoint = sendConfirmationEmailEndpoint;
     }
 
-    public String getSendPostNoificationEndpoint() {
-        return sendPostNoificationEndpoint;
+    public String getSendPostNotificationEndpoint() {
+        return sendPostNotificationEndpoint;
+    }
+
+    public String getSendConfirmationEmailEndpoint() {
+        return sendConfirmationEmailEndpoint;
     }
 }

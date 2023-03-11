@@ -26,7 +26,7 @@ public class ProducerController {
     private static final String POST_NOTIFICATION_TOPIC = "post-notification-topic";
     private static final String CONFIRMATION_EMAIL_TOPIC = "confirmation-email-topic";
 
-    @PostMapping("/notify-followers")
+    @PostMapping("/notify-followers-event")
     public ResponseEntity<Map<String, Object>> notifyFollowers(@Valid @RequestBody PostSender postSender) {
         kafkaSender.send(POST_NOTIFICATION_TOPIC, postSender.getUuid());
         return ResponseHandlers.responseBody("Post notification event produced successfully", HttpStatus.OK, SERVICE);
