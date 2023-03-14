@@ -1,44 +1,65 @@
 package com.fyp.hiveshared.api.helpers;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fyp.hiveshared.api.config.JwtSecret;
 
-import java.security.SignatureException;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class JwtHelpers {
 
-    public static boolean isAccessTokenExpired(String jwtToken) {
+    private JwtSecret jwtSecret = new JwtSecret();
+
+    public JwtHelpers() {
+
+    }
+
+    public String generateJwtTokenWithPayload(Map<String, String> payload) {
+        Date now = new Date(System.currentTimeMillis());
+        return JWT.create()
+                .withIssuedAt(now)
+                .withExpiresAt(getTokenExpireTime(now))
+                .withPayload(payload)
+                .sign(Algorithm.HMAC256(jwtSecret.getJwtSecret()));
+    }
+
+    public boolean isValidJwtToken(String jwtToken) {
+        return isAccessTokenExpired(jwtToken) || isValidSignature(jwtToken);
+    }
+
+    public boolean isAccessTokenExpired(String jwtToken) {
         try {
-            return JWT.decode(jwtToken).getExpiresAt().before(new Date());
+            return !JWT.decode(jwtToken).getExpiresAt().before(new Date());
         } catch (JWTDecodeException ex) {
-            return true;
+            return false;
         }
     }
 
-    public static boolean isValidSignature(String jwtToken, String jwtSecret) {
+    public boolean isValidSignature(String jwtToken) {
         try {
-            JWT.require(Algorithm.HMAC256(jwtSecret)).build().verify(jwtToken);
+            JWT.require(Algorithm.HMAC256(jwtSecret.getJwtSecret())).build().verify(jwtToken);
             return true;
         } catch (JWTVerificationException ex){
             return false;
         }
     }
 
-    public static Optional<String> getPayload(String jwtToken, String jwtSecret, String claim) {
-        if (!isAccessTokenExpired(jwtToken) && isValidSignature(jwtToken, jwtSecret)) {
+    public Optional<String> getPayload(String jwtToken, String claim) {
+        if (isAccessTokenExpired(jwtToken) && isValidSignature(jwtToken)) {
             return Optional.of(JWT.decode(jwtToken).getClaim(claim).asString());
         }
-        return null;
+        return Optional.empty();
     }
 
-//    public static String getPayloads(String jwtToken, List<String> claims) {
-//
-//    }
+    private Date getTokenExpireTime(Date now) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.HOUR_OF_DAY, 24);
+        return calendar.getTime();
+    }
 }
