@@ -275,7 +275,7 @@ public class UserService implements ConfirmUser {
         return user.getUser().getId().toString();
     }
 
-    public void isUserServiceViable(String email) {
+    private void isUserServiceViable(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
         if (!user.isEnabled() || !user.isVerified()) {
             throw new UnauthorizedException(INVALID_USER_USER);
