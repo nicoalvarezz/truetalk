@@ -1,7 +1,5 @@
 package com.fyp.userservice.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -34,15 +32,12 @@ import okhttp3.RequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -65,8 +60,7 @@ public class UserService implements ConfirmUser {
     @Autowired
     EmailSender emailSender;
 
-    @Value("${jwtSecret}")
-    private String jwtSecret;
+    JwtHelpers jwtHelpers = new JwtHelpers();
 
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -214,15 +208,9 @@ public class UserService implements ConfirmUser {
     }
 
     public String generateToken(LoginUserRequest loginUserRequest) {
-        Date now = new Date(System.currentTimeMillis());
-
-        return JWT.create()
-                .withIssuedAt(now)
-                .withExpiresAt(getTokenExpireTime(now))
-                .withPayload(
-                        new HashMap<>(){{ put("uuid", validateUser(loginUserRequest));}}
-                )
-                .sign(Algorithm.HMAC256(jwtSecret));
+        return jwtHelpers.generateJwtTokenWithPayload(
+                new HashMap<>(){{ put("uuid", validateUser(loginUserRequest));}}
+        );
     }
 
     private String validateUser(LoginUserRequest loginUserRequest) {
@@ -233,13 +221,6 @@ public class UserService implements ConfirmUser {
             throw new UnauthorizedException(INVALID_EMAIL_PASSWORD);
         }
         return user.getId().toString();
-    }
-
-    private Date getTokenExpireTime(Date now) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.add(Calendar.HOUR_OF_DAY, 24);
-        return calendar.getTime();
     }
 
     public String getUserName(String uuid) {
@@ -257,11 +238,6 @@ public class UserService implements ConfirmUser {
     private UserVerifiedProfile getUserVerifiedProfile(String uuid) {
         return userVerifiedProfileRepository.findById(UUID.fromString(uuid))
                         .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
-    }
-
-    private String getUuidFromToken(String token) {
-        return JwtHelpers.getPayload(token,  jwtSecret, "uuid")
-                .orElseThrow(() -> new UnauthorizedException(INVALID_USER_USER));
     }
 
     public void sendPostNotification(String uuid) {

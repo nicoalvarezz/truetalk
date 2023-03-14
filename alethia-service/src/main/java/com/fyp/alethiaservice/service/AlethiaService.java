@@ -35,6 +35,8 @@ public class AlethiaService {
     @Autowired
     private UserServiceProperties userServiceProperties;
 
+    JwtHelpers jwtHelpers = new JwtHelpers();
+
     private static final String IDPAL_EXCEPTION_MESSAGE = "An error has occurred with identity verification service services";
     private static final String INFORMATION_TYPE = "email"; // This is only temporal -> I need to decide whether the user can choose or not ???
     private static final Logger LOGGER = LoggerFactory.getLogger(AlethiaService.class);
@@ -108,7 +110,7 @@ public class AlethiaService {
 
     public void renewIdpalAccessToken() throws IOException {
         String accessToken = idPalProperties.getAccessToken();
-        if (!JwtHelpers.isAccessTokenExpired(accessToken)) {
+        if (jwtHelpers.isAccessTokenExpired(accessToken)) {
             return;
         } else {
             Response response = ApiHelpers.makeApiRequest(
