@@ -217,6 +217,7 @@ public class UserService implements ConfirmUser {
         User user = userRepository.findByEmail(loginUserRequest.getEmail())
                         .orElseThrow(() -> new UnauthorizedException(INVALID_EMAIL_ERROR));
 
+        isUserServiceViable(loginUserRequest.getEmail());
         if (!user.getPassword().equals(loginUserRequest.getPassword())) {
             throw new UnauthorizedException(INVALID_EMAIL_PASSWORD);
         }
@@ -272,5 +273,12 @@ public class UserService implements ConfirmUser {
         UserVerifiedProfile user = userVerifiedProfileRepository.findByFirstNameAndLastName(firstName, lastName)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
         return user.getUser().getId().toString();
+    }
+
+    public void isUserServiceViable(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+        if (!user.isEnabled() || !user.isVerified()) {
+            throw new UnauthorizedException(INVALID_USER_USER);
+        }
     }
 }
