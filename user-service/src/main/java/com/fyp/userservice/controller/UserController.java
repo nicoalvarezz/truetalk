@@ -62,7 +62,6 @@ public class UserController {
     }
 
     @PostMapping("/receive-user-profile")
-    @ResponseBody
     public ResponseEntity<Map<String, Object>> receiveUserInformation(@Valid @RequestBody UserProfile userProfileInfo) {
         userService.saveUserProfileInfo(userProfileInfo);
         return ResponseHandlers.responseBody("User profile information received and user created", HttpStatus.CREATED, SERVICE);
