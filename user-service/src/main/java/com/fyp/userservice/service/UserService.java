@@ -152,6 +152,7 @@ public class UserService implements ConfirmUser {
                 .county(userProfileInfo.getCounty())
                 .countryName(userProfileInfo.getCountryName())
                 .postalCode(userProfileInfo.getPostalCode())
+                .selfieUrl(userProfileInfo.getSelfieUrl())
                 .build();
 
         userVerifiedProfileRepository.save(userVerifiedProfile);

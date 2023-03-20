@@ -70,4 +70,7 @@ public class UserVerifiedProfile {
 
     @Column(name = "postal_code", length = 15)
     private String postalCode;
+
+    @Column(name = "selfie_url", length = 200)
+    private String selfieUrl;
 }

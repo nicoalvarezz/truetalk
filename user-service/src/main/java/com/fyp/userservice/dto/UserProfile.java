@@ -84,4 +84,9 @@ public class UserProfile {
     @NotBlank
     @JsonProperty("postalcode")
     private String postalCode;
+
+    @NotNull
+    @NotBlank
+    @JsonProperty("selfie_url")
+    private String selfieUrl;
 }

@@ -115,12 +115,11 @@ public class AlethiaService {
         );
     }
 
-    public void saveSelfieInCloudinary(int submissionId) throws IOException {
+    public String saveSelfieInCloudinary(int submissionId) throws IOException {
         File fileToUpload = constructTempSelfieImage(retrieveSubmissionSelfie(submissionId), String.valueOf(submissionId));
-        String fileUrl = uploadPictureAtCloudinary(fileToUpload);
-
-        // TODO:
-        // Think... where should be this file ure saved.... probably a new field in the the verified_user_profiles table will do the trick
+        String url = uploadPictureAtCloudinary(fileToUpload);
+        fileToUpload.delete();
+        return url;
     }
 
     private byte[] retrieveSubmissionSelfie(int submissionId) throws IOException {
