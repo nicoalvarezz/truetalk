@@ -283,4 +283,11 @@ public class UserService implements ConfirmUser {
             throw new UnauthorizedException(INVALID_USER_USER);
         }
     }
+
+    public String getProfilePictureUrl(String uuid) {
+        return userVerifiedProfileRepository
+                .findById(UUID.fromString(uuid))
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND))
+                .getSelfieUrl();
+    }
 }

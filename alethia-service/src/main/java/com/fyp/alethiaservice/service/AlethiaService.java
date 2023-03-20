@@ -56,8 +56,6 @@ public class AlethiaService {
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    Cloudinary cloudinary = new Cloudinary(cloudinaryProperties.getCloudinaryURL());
-
 
     public void triggerVerification(UserRequest registerUserData) throws IOException, ServiceUnavailableException {
 //        renewIdpalAccessToken();
@@ -151,8 +149,8 @@ public class AlethiaService {
     }
 
     private String uploadPictureAtCloudinary(File file) throws IOException {
+        Cloudinary cloudinary = new Cloudinary(cloudinaryProperties.getCloudinaryURL());
         Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-        System.out.println("URL:  " + uploadResult.get("url"));
         return uploadResult.get("url").toString();
     }
 
