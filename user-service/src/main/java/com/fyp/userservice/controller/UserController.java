@@ -130,4 +130,14 @@ public class UserController {
                 }}
         );
     }
+
+    @GetMapping("/profile-picture-url")
+    public ResponseEntity<Map<String, Object>> profilePictureUrl(@RequestParam(value = "uuid") String uuid) {
+        return ResponseHandlers.responseBody(
+                "Post likes retrieved successfully",
+                HttpStatus.OK,
+                SERVICE,
+                new HashMap<>(){{ put("profile_picture_url", userService.getProfilePictureUrl(uuid)); }}
+        );
+    }
 }

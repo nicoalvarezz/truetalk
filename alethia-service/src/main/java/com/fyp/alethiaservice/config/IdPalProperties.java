@@ -17,6 +17,7 @@ public class IdPalProperties {
     private final String sendVerificationLinkEndpoint;
     private String getSubmissionDetailsEndpoint;
     private String getAccessTokenEndpoint;
+    private String getDocumentEndpoint;
 
     @Autowired
     public IdPalProperties(
@@ -28,7 +29,8 @@ public class IdPalProperties {
             @Value("${idpal.apiAccess.accessToken}") String accessToken,
             @Value("${idpal.endpoint.sendVerificationLink}") String sendVerificationLinkEndpoint,
             @Value("${idpal.endpoint.getSubmissionDetails}") String getSubmissionDetailsEndpoint,
-            @Value("${idpal.endpoint.getAccessToken}") String getAccessTokenEndpoint
+            @Value("${idpal.endpoint.getAccessToken}") String getAccessTokenEndpoint,
+            @Value("${idpal.endpoint.getDocument}") String getDocumentEndpoint
     ) {
         this.clientKey = clientKey;
         this.accessKey = accessKey;
@@ -39,6 +41,7 @@ public class IdPalProperties {
         this.sendVerificationLinkEndpoint = sendVerificationLinkEndpoint;
         this.getSubmissionDetailsEndpoint = getSubmissionDetailsEndpoint;
         this.getAccessTokenEndpoint = getAccessTokenEndpoint;
+        this.getDocumentEndpoint = getDocumentEndpoint;
     }
 
     public String getClientKey() {
@@ -75,6 +78,10 @@ public class IdPalProperties {
 
     public String getRefreshToken() {
         return refreshToken;
+    }
+
+    public String getGetDocumentEndpoint() {
+        return getDocumentEndpoint;
     }
 
     public void setNewTokens(String accessToken, String refreshToken) {

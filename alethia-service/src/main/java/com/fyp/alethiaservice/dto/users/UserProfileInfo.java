@@ -53,4 +53,7 @@ public class UserProfileInfo {
     @JsonProperty("postalcode")
     private String postalCode;
 
+    @JsonProperty("selfie_url")
+    private String selfieUrl;
+
 }

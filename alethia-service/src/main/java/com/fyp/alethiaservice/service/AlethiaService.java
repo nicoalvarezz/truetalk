@@ -1,9 +1,12 @@
 package com.fyp.alethiaservice.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fyp.alethiaservice.config.CloudinaryProperties;
 import com.fyp.alethiaservice.config.IdPalProperties;
 import com.fyp.alethiaservice.config.UserServiceProperties;
 import com.fyp.alethiaservice.dto.idpal.IdpalAccessToken;
@@ -23,7 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
 
 
 @Service
@@ -34,6 +40,9 @@ public class AlethiaService {
 
     @Autowired
     private UserServiceProperties userServiceProperties;
+
+    @Autowired
+    private CloudinaryProperties cloudinaryProperties;
 
     JwtHelpers jwtHelpers = new JwtHelpers();
 
@@ -67,10 +76,6 @@ public class AlethiaService {
                 )
         );
 
-        // TODO:
-        // Create a class in the service layer that is in charge of checking the status of the response
-        // And throw the error
-        // Less clutter in this class
         if (response.code() == HttpStatus.UNAUTHORIZED.value()) {
             throw new ServiceUnavailableException(IDPAL_EXCEPTION_MESSAGE);
         }
@@ -106,6 +111,47 @@ public class AlethiaService {
                         EMPTY_ACCESS_TOKEN
                 )
         );
+    }
+
+    public String saveSelfieInCloudinary(int submissionId) throws IOException {
+        File fileToUpload = constructTempSelfieImage(retrieveSubmissionSelfie(submissionId), String.valueOf(submissionId));
+        String url = uploadPictureAtCloudinary(fileToUpload);
+        fileToUpload.delete();
+        return url;
+    }
+
+    private byte[] retrieveSubmissionSelfie(int submissionId) throws IOException {
+        IdpalRequest idPalRequest = IdpalRequest.builder()
+                .clientKey(idPalProperties.getClientKey())
+                .accessKey(idPalProperties.getAccessKey())
+                .submissionId(submissionId)
+                .documentType("selfie")
+                .build();
+
+        Response response = ApiHelpers.makeApiRequest(
+                ApiHelpers.postRequest(
+                        idPalProperties.getGetDocumentEndpoint(),
+                        RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
+                        idPalProperties.getAccessToken()
+                )
+        );
+
+        return response.body().byteStream().readAllBytes();
+    }
+
+    private File constructTempSelfieImage(byte[] imageData, String fileName) throws IOException {
+        File file = new File(fileName + ".jpg");
+        file.createNewFile();
+        FileOutputStream outputStream = new FileOutputStream(file);
+        outputStream.write(imageData);
+        outputStream.close();
+        return file;
+    }
+
+    private String uploadPictureAtCloudinary(File file) throws IOException {
+        Cloudinary cloudinary = new Cloudinary(cloudinaryProperties.getCloudinaryURL());
+        Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+        return uploadResult.get("url").toString();
     }
 
     public void renewIdpalAccessToken() throws IOException {

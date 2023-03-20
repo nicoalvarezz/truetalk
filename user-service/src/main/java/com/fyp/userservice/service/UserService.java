@@ -121,6 +121,7 @@ public class UserService implements ConfirmUser {
 
     }
 
+    @Deprecated
     public void triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
         AlethiaRequest alethiaRequest = MAPPER.convertValue(registerUserRequest, AlethiaRequest.class);
         ApiHelpers.makeApiRequest(
@@ -151,6 +152,7 @@ public class UserService implements ConfirmUser {
                 .county(userProfileInfo.getCounty())
                 .countryName(userProfileInfo.getCountryName())
                 .postalCode(userProfileInfo.getPostalCode())
+                .selfieUrl(userProfileInfo.getSelfieUrl())
                 .build();
 
         userVerifiedProfileRepository.save(userVerifiedProfile);
@@ -280,5 +282,12 @@ public class UserService implements ConfirmUser {
         if (!user.isEnabled() || !user.isVerified()) {
             throw new UnauthorizedException(INVALID_USER_USER);
         }
+    }
+
+    public String getProfilePictureUrl(String uuid) {
+        return userVerifiedProfileRepository
+                .findById(UUID.fromString(uuid))
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND))
+                .getSelfieUrl();
     }
 }

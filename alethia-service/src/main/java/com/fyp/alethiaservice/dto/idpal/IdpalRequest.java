@@ -37,4 +37,7 @@ public class IdpalRequest {
 
     @JsonProperty("content_disposition")
     private String contentDisposition;
+
+    @JsonProperty("document_type")
+    private String documentType;
 }
