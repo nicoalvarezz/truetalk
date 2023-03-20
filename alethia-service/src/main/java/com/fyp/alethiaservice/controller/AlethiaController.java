@@ -36,6 +36,7 @@ public class AlethiaController {
     public ResponseEntity<Map<String, Object>> webhookReceiver(@Valid @RequestBody IdpalWebhookRequest idPalWebhookRequest) throws IOException {
         UserProfileInfo userPersonalInfo = alethiaService.retrieveUserPersonalInfo(idPalWebhookRequest.getSubmissionId());
         alethiaService.sendUserProfileToUserService(userPersonalInfo);
+        alethiaService.saveSelfieInCloudinary(idPalWebhookRequest.getSubmissionId());
         return ResponseHandlers.responseBody("Webhook received", HttpStatus.OK, SERVICE);
     }
 }

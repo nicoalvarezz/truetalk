@@ -121,6 +121,7 @@ public class UserService implements ConfirmUser {
 
     }
 
+    @Deprecated
     public void triggerAlethiaVerification(RegisterUserRequest registerUserRequest) throws IOException {
         AlethiaRequest alethiaRequest = MAPPER.convertValue(registerUserRequest, AlethiaRequest.class);
         ApiHelpers.makeApiRequest(

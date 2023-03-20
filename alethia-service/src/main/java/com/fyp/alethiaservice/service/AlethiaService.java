@@ -1,9 +1,12 @@
 package com.fyp.alethiaservice.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fyp.alethiaservice.config.CloudinaryProperties;
 import com.fyp.alethiaservice.config.IdPalProperties;
 import com.fyp.alethiaservice.config.UserServiceProperties;
 import com.fyp.alethiaservice.dto.idpal.IdpalAccessToken;
@@ -23,7 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
 
 
 @Service
@@ -34,6 +40,9 @@ public class AlethiaService {
 
     @Autowired
     private UserServiceProperties userServiceProperties;
+
+    @Autowired
+    private CloudinaryProperties cloudinaryProperties;
 
     JwtHelpers jwtHelpers = new JwtHelpers();
 
@@ -46,6 +55,8 @@ public class AlethiaService {
     private static ObjectMapper MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    Cloudinary cloudinary = new Cloudinary(cloudinaryProperties.getCloudinaryURL());
 
 
     public void triggerVerification(UserRequest registerUserData) throws IOException, ServiceUnavailableException {
@@ -67,10 +78,6 @@ public class AlethiaService {
                 )
         );
 
-        // TODO:
-        // Create a class in the service layer that is in charge of checking the status of the response
-        // And throw the error
-        // Less clutter in this class
         if (response.code() == HttpStatus.UNAUTHORIZED.value()) {
             throw new ServiceUnavailableException(IDPAL_EXCEPTION_MESSAGE);
         }
@@ -106,6 +113,48 @@ public class AlethiaService {
                         EMPTY_ACCESS_TOKEN
                 )
         );
+    }
+
+    public void saveSelfieInCloudinary(int submissionId) throws IOException {
+        File fileToUpload = constructTempSelfieImage(retrieveSubmissionSelfie(submissionId), String.valueOf(submissionId));
+        String fileUrl = uploadPictureAtCloudinary(fileToUpload);
+
+        // TODO:
+        // Think... where should be this file ure saved.... probably a new field in the the verified_user_profiles table will do the trick
+    }
+
+    private byte[] retrieveSubmissionSelfie(int submissionId) throws IOException {
+        IdpalRequest idPalRequest = IdpalRequest.builder()
+                .clientKey(idPalProperties.getClientKey())
+                .accessKey(idPalProperties.getAccessKey())
+                .submissionId(submissionId)
+                .documentType("selfie")
+                .build();
+
+        Response response = ApiHelpers.makeApiRequest(
+                ApiHelpers.postRequest(
+                        idPalProperties.getGetDocumentEndpoint(),
+                        RequestBody.create(MAPPER.writeValueAsString(idPalRequest), JSON),
+                        idPalProperties.getAccessToken()
+                )
+        );
+
+        return response.body().byteStream().readAllBytes();
+    }
+
+    private File constructTempSelfieImage(byte[] imageData, String fileName) throws IOException {
+        File file = new File(fileName + ".jpg");
+        file.createNewFile();
+        FileOutputStream outputStream = new FileOutputStream(file);
+        outputStream.write(imageData);
+        outputStream.close();
+        return file;
+    }
+
+    private String uploadPictureAtCloudinary(File file) throws IOException {
+        Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+        System.out.println("URL:  " + uploadResult.get("url"));
+        return uploadResult.get("url").toString();
     }
 
     public void renewIdpalAccessToken() throws IOException {
