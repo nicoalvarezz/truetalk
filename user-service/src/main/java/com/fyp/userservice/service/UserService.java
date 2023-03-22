@@ -159,6 +159,10 @@ public class UserService implements ConfirmUser {
         LOGGER.info("User with uuid {}, successfully verified ", userVerifiedProfile.getUuid());
     }
 
+//    private firstAndLastNameHandling() {
+//
+//    }
+
     @Override
     public User getUserBycConfirmationToken(String confirmationToken) {
         return confirmationTokenRepository.findByToken(confirmationToken).getUser();
