@@ -8,6 +8,7 @@ services:
       dockerfile: docker/user-service/Dockerfile
     ports:
       - '8000:8000'
+      - '9000:9000'
 
   alethia-service:
     container_name: alethia_service
