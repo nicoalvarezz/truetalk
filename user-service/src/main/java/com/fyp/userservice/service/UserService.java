@@ -170,7 +170,7 @@ public class UserService implements ConfirmUser {
         if (splitFirstName.length == 1) {
             return;
         }
-        String newLastName = String.join(userVerifiedProfile.getFirstName().split(" ", 2)[1], " ", userVerifiedProfile.getLastName());
+        String newLastName = String.join(" ", userVerifiedProfile.getFirstName().split(" ", 2)[1], userVerifiedProfile.getLastName());
         System.out.println("New Last Name: " + newLastName);
         userVerifiedProfile.setFirstName(splitFirstName[0]);
         userVerifiedProfile.setLastName(newLastName);
