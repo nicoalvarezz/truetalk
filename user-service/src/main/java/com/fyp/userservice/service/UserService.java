@@ -158,9 +158,6 @@ public class UserService implements ConfirmUser {
 
         firstAndLastNameHandling(userVerifiedProfile);
 
-        System.out.println("First Name: " + userVerifiedProfile.getFirstName());
-        System.out.println("Last Name: " + userVerifiedProfile.getLastName());
-
         userVerifiedProfileRepository.save(userVerifiedProfile);
         LOGGER.info("User with uuid {}, successfully verified ", userVerifiedProfile.getUuid());
     }
@@ -171,7 +168,6 @@ public class UserService implements ConfirmUser {
             return;
         }
         String newLastName = String.format("%s %s", userVerifiedProfile.getFirstName().split(" ", 2)[1], userVerifiedProfile.getLastName());
-        System.out.println("New Last Name: " + newLastName);
         userVerifiedProfile.setFirstName(splitFirstName[0]);
         userVerifiedProfile.setLastName(newLastName);
     }
@@ -219,7 +215,7 @@ public class UserService implements ConfirmUser {
                         .collect(Collectors.toList());
     }
 
-    private List<UUID> getFollowers(String uuid) {
+    public List<UUID> getFollowers(String uuid) {
         return followeeeRepository.findByFolloweeId(UUID.fromString(uuid))
                 .stream()
                 .map(Followee::getFollowerId)

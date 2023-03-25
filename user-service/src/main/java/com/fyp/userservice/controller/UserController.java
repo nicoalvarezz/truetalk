@@ -92,10 +92,20 @@ public class UserController {
     @GetMapping("/list-followees")
     public ResponseEntity<Map<String, Object>> listFollowees(@Valid @RequestParam(value = "uuid") String uuid) {
         return ResponseHandlers.responseBody(
-                "list of followees retrived successfully",
+                "list of followees retrieved successfully",
                 HttpStatus.OK,
                 SERVICE,
                 new HashMap<>(){{ put("followees", userService.getFollowees(uuid));}}
+        );
+    }
+
+    @PostMapping("/list-followers")
+    public ResponseEntity<Map<String, Object>> listFollowers(@Valid @RequestParam(value = "uuid") String uuid) {
+        return ResponseHandlers.responseBody(
+                "list of followers retrieved successfully",
+                HttpStatus.OK,
+                SERVICE,
+                new HashMap<>(){{ put("followers", userService.getFollowers(uuid));}}
         );
     }
 
