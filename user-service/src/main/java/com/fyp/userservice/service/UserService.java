@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -155,13 +156,25 @@ public class UserService implements ConfirmUser {
                 .selfieUrl(userProfileInfo.getSelfieUrl())
                 .build();
 
+        firstAndLastNameHandling(userVerifiedProfile);
+
+        System.out.println("First Name: " + userVerifiedProfile.getFirstName());
+        System.out.println("Last Name: " + userVerifiedProfile.getLastName());
+
         userVerifiedProfileRepository.save(userVerifiedProfile);
         LOGGER.info("User with uuid {}, successfully verified ", userVerifiedProfile.getUuid());
     }
 
-//    private firstAndLastNameHandling() {
-//
-//    }
+    private void firstAndLastNameHandling(UserVerifiedProfile userVerifiedProfile) {
+        String[] splitFirstName = userVerifiedProfile.getFirstName().split(" ");
+        if (splitFirstName.length == 1) {
+            return;
+        }
+        String newLastName = String.join(userVerifiedProfile.getFirstName().split(" ", 2)[1], " ", userVerifiedProfile.getLastName());
+        System.out.println("New Last Name: " + newLastName);
+        userVerifiedProfile.setFirstName(splitFirstName[0]);
+        userVerifiedProfile.setLastName(newLastName);
+    }
 
     @Override
     public User getUserBycConfirmationToken(String confirmationToken) {
