@@ -99,16 +99,6 @@ public class UserController {
         );
     }
 
-    @PostMapping("/list-followers")
-    public ResponseEntity<Map<String, Object>> listFollowers(@Valid @RequestParam(value = "uuid") String uuid) {
-        return ResponseHandlers.responseBody(
-                "list of followers retrieved successfully",
-                HttpStatus.OK,
-                SERVICE,
-                new HashMap<>(){{ put("followers", userService.getFollowers(uuid));}}
-        );
-    }
-
     @GetMapping("/user-profile")
     public ResponseEntity<Map<String, Object>> userProfilePage(@Valid @RequestParam(value = "uuid") String uuid) {
         return ResponseHandlers.responseBody(
@@ -119,6 +109,7 @@ public class UserController {
                     put("name", userService.getUserName(uuid));
                     put("country", userService.getUserCountry(uuid));
                     put("language", userService.getUserLanguage(uuid));
+                    put("followers", userService.getFollowers(uuid).size());
                 }}
         );
     }
