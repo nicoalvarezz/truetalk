@@ -62,6 +62,7 @@ public class PostService {
                 .text(userPost.getText())
                 .user(verifyUuid(userPost.getUser()))
                 .name(getUserName(userPost.getUser()))
+                .profilePictureUrl(userPost.getProfilePictureUrl())
                 .likes(new ArrayList<>())
                 .comments(new ArrayList<>())
                 .build();
