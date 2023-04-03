@@ -29,4 +29,8 @@ public class PostComment {
     @NotNull
     @NotBlank
     private String user;
+
+    @NotNull
+    @NotBlank
+    private String profilePictureUrl;
 }
