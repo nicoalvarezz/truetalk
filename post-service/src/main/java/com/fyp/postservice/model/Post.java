@@ -27,6 +27,8 @@ public class Post {
 
     private String name;
 
+    private String profilePictureUrl;
+
     private List<String> likes;
 
     private List<Comment> comments;

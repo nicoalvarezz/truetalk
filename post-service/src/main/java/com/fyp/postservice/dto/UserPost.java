@@ -23,4 +23,8 @@ public class UserPost {
     @NotNull
     @NotBlank
     private String user;
+
+    @NotNull
+    @NotBlank
+    private String profilePictureUrl;
 }
