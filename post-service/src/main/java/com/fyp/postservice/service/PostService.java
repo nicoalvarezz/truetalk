@@ -145,6 +145,7 @@ public class PostService {
                 .user(postComment.getUser())
                 .text(postComment.getText())
                 .name(getUserName(postComment.getUser()))
+                .profilePictureUrl(postComment.getProfilePictureUrl())
                 .createdAt(String.valueOf(Instant.now().getEpochSecond()))
                 .build();
 

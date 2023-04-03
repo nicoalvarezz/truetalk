@@ -24,5 +24,7 @@ public class Comment {
 
     private String text;
 
+    private String profilePictureUrl;
+
     private String createdAt;
 }
